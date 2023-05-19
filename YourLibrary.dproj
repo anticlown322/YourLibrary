@@ -105,6 +105,11 @@
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Icon_MainIcon>YourLibrary_Icon2.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>D:\Другое\Изображения\NoSize\book-shelf.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>D:\Другое\Изображения\NoSize\book-shelf.png</UWP_DelphiLogo150>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -125,7 +130,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="YourLibraryVCLMain.pas">
-            <Form>frmMenu</Form>
+            <Form>frmMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="YourLibraryVCLLoadingScreen.pas">
@@ -158,16 +163,27 @@
                 <Source>
                     <Source Name="MainSource">YourLibrary.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win64\Debug\YourLibrary.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="D:\Другое\Изображения\NoSize\book-shelf.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win64">
-                        <RemoteName>YourLibrary.exe</RemoteName>
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Win32\Debug\YourLibrary.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
+                        <RemoteName>YourLibrary.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\YourLibrary.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>YourLibrary.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

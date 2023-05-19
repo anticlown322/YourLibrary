@@ -11,6 +11,7 @@ Uses
 Type
     TdtmdImages = Class(TDataModule)
         ImcForButtons: TImageCollection;
+    imcForIcons: TImageCollection;
     End;
 
 Var

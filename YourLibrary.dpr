@@ -2,7 +2,7 @@ program YourLibrary;
 
 uses
   Vcl.Forms,
-  YourLibraryVCLMain in 'YourLibraryVCLMain.pas' {frmMenu},
+  YourLibraryVCLMain in 'YourLibraryVCLMain.pas' {frmMain},
   YourLibraryVCLLoadingScreen in 'YourLibraryVCLLoadingScreen.pas' {frmLoadingScreen},
   YourLibraryEngine in 'YourLibraryEngine.pas',
   YourLibraryDataImages in 'YourLibraryDataImages.pas' {dtmdImages: TDataModule};
@@ -19,7 +19,7 @@ begin
     FrmLoadingScreen.Hide;
 
     Application.MainFormOnTaskbar := False;
-  Application.CreateForm(TfrmMenu, frmMenu);
+  Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmLoadingScreen, frmLoadingScreen);
   Application.CreateForm(TdtmdImages, dtmdImages);
   Application.Run;
