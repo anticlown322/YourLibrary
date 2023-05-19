@@ -124,13 +124,19 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="YourLibraryVCLMenu.pas">
+        <DCCReference Include="YourLibraryVCLMain.pas">
             <Form>frmMenu</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="YourLibraryVCLLoadingScreen.pas">
             <Form>frmLoadingScreen</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="YourLibraryEngine.pas"/>
+        <DCCReference Include="YourLibraryDataImages.pas">
+            <Form>dtmdImages</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -154,14 +160,14 @@
                 </Source>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win32\Debug\YourLibrary.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\YourLibrary.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>YourLibrary.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\YourLibrary.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="Win32\Debug\YourLibrary.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>YourLibrary.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

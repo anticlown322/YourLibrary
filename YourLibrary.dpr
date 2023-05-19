@@ -2,8 +2,10 @@ program YourLibrary;
 
 uses
   Vcl.Forms,
-  YourLibraryVCLMenu in 'YourLibraryVCLMenu.pas' {frmMenu},
-  YourLibraryVCLLoadingScreen in 'YourLibraryVCLLoadingScreen.pas' {frmLoadingScreen};
+  YourLibraryVCLMain in 'YourLibraryVCLMain.pas' {frmMenu},
+  YourLibraryVCLLoadingScreen in 'YourLibraryVCLLoadingScreen.pas' {frmLoadingScreen},
+  YourLibraryEngine in 'YourLibraryEngine.pas',
+  YourLibraryDataImages in 'YourLibraryDataImages.pas' {dtmdImages: TDataModule};
 
 {$R *.res}
 
@@ -19,5 +21,6 @@ begin
     Application.MainFormOnTaskbar := False;
   Application.CreateForm(TfrmMenu, frmMenu);
   Application.CreateForm(TfrmLoadingScreen, frmLoadingScreen);
+  Application.CreateForm(TdtmdImages, dtmdImages);
   Application.Run;
 end.
