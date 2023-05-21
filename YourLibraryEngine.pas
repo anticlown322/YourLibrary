@@ -3,6 +3,11 @@ Unit YourLibraryEngine;
 Interface
 
 Type
+
+    { бэк }
+
+    TOnModelChanged = Procedure Of Object;
+
     { записи и списки }
 
     // Писатель
@@ -53,12 +58,25 @@ Type
         ListOfWriters: TPWriters;
         ListOfBooks: TPBooks;
         ListOfAuthors: TPAuthors;
+        ViewCallBack: TOnModelChanged;
     Public
         Property Writers: TPWriters Read ListOfWriters Write ListOfWriters;
         Property Books: TPBooks Read ListOfBooks Write ListOfBooks;
         Property Authors: TPAuthors Read ListOfAuthors Write ListOfAuthors;
+        Property Callback: TOnModelChanged Read ViewCallback Write ViewCallback;
+        Procedure SetCallback(ACallback: TOnModelChanged);
+        // Function  GetCount: Integer;
+        // Procedure AddRec(Const Rec:);
+        // Procedure GetRec(Index: Integer; Var Rec: );
+        // Procedure SetRec(Index: Integer; Const Rec: );
+        // Procedure RemoveRec(Index: Integer);
     End;
 
 Implementation
+
+Procedure TLibrary.SetCallback(ACallback: TOnModelChanged);
+Begin
+    Callback := ACallback;
+End;
 
 End.

@@ -28,7 +28,6 @@ object frmMain: TfrmMain
     Height = 486
     Align = alLeft
     TabOrder = 0
-    ExplicitHeight = 487
     object sdbtAddAuthor: TSpeedButton
       AlignWithMargins = True
       Left = 1
@@ -85,7 +84,6 @@ object frmMain: TfrmMain
       ExplicitLeft = 0
     end
     object sdbtFind: TSpeedButton
-      Tag = 3
       AlignWithMargins = True
       Left = 1
       Top = 220
@@ -95,7 +93,6 @@ object frmMain: TfrmMain
       Margins.Right = 0
       Action = acSearch
       Align = alTop
-      GroupIndex = 3
       ImageIndex = 4
       ImageName = 'HotButtons\review'
       Images = vilImages_48
@@ -162,7 +159,7 @@ object frmMain: TfrmMain
       ExplicitLeft = 0
     end
     object sdbtEdit: TSpeedButton
-      Tag = 4
+      Tag = 3
       AlignWithMargins = True
       Left = 1
       Top = 274
@@ -207,8 +204,6 @@ object frmMain: TfrmMain
     Height = 486
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 560
-    ExplicitHeight = 487
     object lvList: TListView
       Left = 1
       Top = 52
@@ -231,8 +226,6 @@ object frmMain: TfrmMain
       SortType = stText
       TabOrder = 0
       ViewStyle = vsReport
-      ExplicitWidth = 558
-      ExplicitHeight = 404
     end
     object pTop: TPanel
       Left = 1
@@ -246,7 +239,6 @@ object frmMain: TfrmMain
       Padding.Right = 3
       Padding.Bottom = 3
       TabOrder = 1
-      ExplicitLeft = 2
       object lbFilter: TLabel
         Left = 21
         Top = 12
@@ -298,8 +290,6 @@ object frmMain: TfrmMain
       Width = 571
       Height = 30
       Panels = <>
-      ExplicitTop = 456
-      ExplicitWidth = 558
     end
   end
   object actlActions: TActionList
@@ -476,16 +466,19 @@ object frmMain: TfrmMain
       Caption = #1047#1072#1087#1080#1089#1100' '#1086' '#1087#1080#1089#1072#1090#1077#1083#1077
       ImageIndex = 4
       ImageName = 'pencil'
+      OnClick = miWriterClick
     end
     object miBook: TMenuItem
       Caption = #1047#1072#1087#1080#1089#1100' '#1086' '#1082#1085#1080#1075#1077
       ImageIndex = 2
       ImageName = 'book2'
+      OnClick = miBookClick
     end
     object miAuthor: TMenuItem
       Caption = #1047#1072#1087#1080#1089#1100' '#1086#1073' '#1072#1074#1090#1086#1088#1077
       ImageIndex = 5
       ImageName = 'author'
+      OnClick = miAuthorClick
     end
   end
 end

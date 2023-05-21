@@ -69,7 +69,14 @@ Type
         Procedure SdbtExitClick(Sender: TObject);
         Procedure AcDevInfoExecute(Sender: TObject);
         Procedure AcOptionChoiceExecute(Sender: TObject);
-    procedure actlActionsUpdate(Action: TBasicAction; var Handled: Boolean);
+        Procedure ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
+        Procedure MiWriterClick(Sender: TObject);
+        Procedure MiBookClick(Sender: TObject);
+        Procedure MiAuthorClick(Sender: TObject);
+    Private
+        ButtonTag: Integer;
+    Public
+        Property BtTag: Integer Read ButtonTag Write ButtonTag;
     End;
 
 Var
@@ -84,7 +91,7 @@ Uses YourLibraryDataImages,
 
 Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
 Const
-    FIRST_MESSAGE = 'Ф.И.О.: Карась А.С. a.k.a Clownfish' + #13#10;
+    FIRST_MESSAGE = 'Ф.И.О.: Карась А.С.' + #13#10;
     SECOND_MESSAGE = 'Группа: 251004' + #13#10;
     THIRD_MESSAGE = 'Контакты: предварительная запись вживую по адресу' + #13#10;
     FOURTH_MESSAGE = 'г.Гродно, ул.Мостовая, д.31';
@@ -109,19 +116,19 @@ Var
 Begin
     With Sender As TSpeedButton Do
     Begin
+        BtTag := (Sender As TSpeedButton).Tag;
         Pt := Point(Left + Width, Top);
         Pt := Parent.ClientToScreen(Pt);
     End;
     PpabChoice.Popup(Pt.X, Pt.Y);
 End;
 
-procedure TfrmMain.actlActionsUpdate(Action: TBasicAction;
-  var Handled: Boolean);
-begin
-  //actTaskAdd.Enabled := True;
-  //actTaskEdit.Enabled := lvTasks.ItemIndex >= 0;
-  //actTaskRemove.Enabled := lvTasks.ItemIndex >= 0;
-end;
+Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
+Begin
+    // actTaskAdd.Enabled := True;
+    // actTaskEdit.Enabled := lvTasks.ItemIndex >= 0;
+    // actTaskRemove.Enabled := lvTasks.ItemIndex >= 0;
+End;
 
 Procedure TfrmMain.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Var
@@ -139,6 +146,60 @@ Begin
             CanClose := True;
         IDCANCEL:
             CanClose := False;
+    End;
+End;
+
+Procedure TfrmMain.MiAuthorClick(Sender: TObject);
+Begin
+    Case BtTag Of
+        1: // AddRec
+            Begin
+
+            End;
+        2: // DeleteRec
+            Begin
+
+            End;
+        3: // EditRed
+            Begin
+
+            End;
+    End;
+End;
+
+Procedure TfrmMain.MiBookClick(Sender: TObject);
+Begin
+    Case BtTag Of
+        1: // AddRec
+            Begin
+
+            End;
+        2: // DeleteRec
+            Begin
+
+            End;
+        3: // EditRed
+            Begin
+
+            End;
+    End;
+End;
+
+Procedure TfrmMain.MiWriterClick(Sender: TObject);
+Begin
+    Case BtTag Of
+        1: // AddRec
+            Begin
+
+            End;
+        2: // DeleteRec
+            Begin
+
+            End;
+        3: // EditRed
+            Begin
+
+            End;
     End;
 End;
 
