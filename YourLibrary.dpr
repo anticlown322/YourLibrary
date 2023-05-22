@@ -5,7 +5,8 @@ uses
   YourLibraryVCLMain in 'YourLibraryVCLMain.pas' {frmMain},
   YourLibraryVCLLoadingScreen in 'YourLibraryVCLLoadingScreen.pas' {frmLoadingScreen},
   YourLibraryEngine in 'YourLibraryEngine.pas',
-  YourLibraryDataImages in 'YourLibraryDataImages.pas' {dtmdImages: TDataModule};
+  YourLibraryDataImages in 'YourLibraryDataImages.pas' {dtmdImages: TDataModule},
+  YourLibraryVCLRecEditor in 'YourLibraryVCLRecEditor.pas' {Form1};
 
 {$R *.res}
 
@@ -22,5 +23,6 @@ begin
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmLoadingScreen, frmLoadingScreen);
   Application.CreateForm(TdtmdImages, dtmdImages);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

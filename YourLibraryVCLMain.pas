@@ -25,7 +25,9 @@ Uses
     VCLTee.TeCanvas,
     Vcl.Menus,
     Vcl.ActnPopup,
-    Vcl.XPStyleActnCtrls;
+    Vcl.XPStyleActnCtrls,
+    YourLibraryDataImages,
+    YourLibraryEngine;
 
 Type
     TfrmMain = Class(TForm)
@@ -73,10 +75,14 @@ Type
         Procedure MiWriterClick(Sender: TObject);
         Procedure MiBookClick(Sender: TObject);
         Procedure MiAuthorClick(Sender: TObject);
+        Procedure FormCreate(Sender: TObject);
+        Procedure FormDestroy(Sender: TObject);
     Private
         ButtonTag: Integer;
+        LibraryEngine: TLibraryEngine;
     Public
         Property BtTag: Integer Read ButtonTag Write ButtonTag;
+        Property LibraryEng: TLibraryEngine Read LibraryEngine Write LibraryEngine;
     End;
 
 Var
@@ -85,49 +91,11 @@ Var
 Implementation
 
 {$R *.dfm}
+{ форма }
 
-Uses YourLibraryDataImages,
-    YourLibraryEngine;
-
-Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
-Const
-    FIRST_MESSAGE = 'Ф.И.О.: Карась А.С.' + #13#10;
-    SECOND_MESSAGE = 'Группа: 251004' + #13#10;
-    THIRD_MESSAGE = 'Контакты: предварительная запись вживую по адресу' + #13#10;
-    FOURTH_MESSAGE = 'г.Гродно, ул.Мостовая, д.31';
+Procedure TfrmMain.FormCreate(Sender: TObject);
 Begin
-    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE, 'О разработчике');
-End;
-
-Procedure TfrmMain.AcHelpContentsExecute(Sender: TObject);
-Const
-    FIRST_MESSAGE = '- Вводимыми значениями могут являться только целые числа!' + #13#10;
-    SECOND_MESSAGE = '- Диапазон ввода количества вершин: 3...15' + #13#10;
-    THIRD_MESSAGE = '- Для ввода из файла используйте вкладку ''Файл'' - ''Открыть''.' + #13#10;
-    FOURTH_MESSAGE = '- Для сохранения в файл используйте вкладку ''Файл'' - ''Сохранить''.' + #13#10;
-    FIFTH_MESSAGE = '- Для удобного использования программы представлен набор кнопок на левой панели.';
-Begin
-    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE + FIFTH_MESSAGE, 'Справка');
-End;
-
-Procedure TfrmMain.AcOptionChoiceExecute(Sender: TObject);
-Var
-    Pt: TPoint;
-Begin
-    With Sender As TSpeedButton Do
-    Begin
-        BtTag := (Sender As TSpeedButton).Tag;
-        Pt := Point(Left + Width, Top);
-        Pt := Parent.ClientToScreen(Pt);
-    End;
-    PpabChoice.Popup(Pt.X, Pt.Y);
-End;
-
-Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
-Begin
-    // actTaskAdd.Enabled := True;
-    // actTaskEdit.Enabled := lvTasks.ItemIndex >= 0;
-    // actTaskRemove.Enabled := lvTasks.ItemIndex >= 0;
+    LibraryEngine := TLibraryEngine.Create;
 End;
 
 Procedure TfrmMain.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
@@ -147,6 +115,55 @@ Begin
         IDCANCEL:
             CanClose := False;
     End;
+End;
+
+Procedure TfrmMain.FormDestroy(Sender: TObject);
+Begin
+    LibraryEngine.Free;
+End;
+
+{ actionlist }
+
+Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
+Begin
+    AcEditRec.Enabled := LvList.ItemIndex > -1;
+    AcDeleteRec.Enabled := LvList.ItemIndex > -1;
+    AcSearch.Enabled := LvList.ItemIndex > -1;
+End;
+
+Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
+Const
+    FIRST_MESSAGE = 'Ф.И.О.: Карась А.С.' + #13#10;
+    SECOND_MESSAGE = 'Группа: 251004' + #13#10;
+    THIRD_MESSAGE = 'Контакты: предварительная запись вживую по адресу' + #13#10;
+    FOURTH_MESSAGE = 'г.Гродно, ул.Мостовая, д.31';
+Begin
+    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE, 'О разработчике');
+End;
+
+Procedure TfrmMain.AcHelpContentsExecute(Sender: TObject);
+Const
+    FIRST_MESSAGE = '                                       Добро пожаловать в YourLibrary!' + #13#10 + #13#10;
+    SECOND_MESSAGE = 'Данная программа позволяет хранить записи с информацией о писателях и книгах, а также об авторстве.' + #13#10;
+    THIRD_MESSAGE =
+        'Для комфотного использования на левой панели представлены горячие кнопки, позволяющие взаимодействовать с приложением наиболее быстро.';
+    FOURTH_MESSAGE = 'Подробная информация по использованию приложения представлена в Руководстве пользователя.' + #13#10;
+    FIFTH_MESSAGE = #13#10 + '                                            Счастливого пользования!';
+Begin
+    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE + FIFTH_MESSAGE, 'Справка');
+End;
+
+Procedure TfrmMain.AcOptionChoiceExecute(Sender: TObject);
+Var
+    Pt: TPoint;
+Begin
+    With Sender As TSpeedButton Do
+    Begin
+        BtTag := (Sender As TSpeedButton).Tag;
+        Pt := Point(Left + Width, Top);
+        Pt := Parent.ClientToScreen(Pt);
+    End;
+    PpabChoice.Popup(Pt.X, Pt.Y);
 End;
 
 Procedure TfrmMain.MiAuthorClick(Sender: TObject);
@@ -202,6 +219,8 @@ Begin
             End;
     End;
 End;
+
+{ кнопки }
 
 Procedure TfrmMain.SdbtExitClick(Sender: TObject);
 Begin

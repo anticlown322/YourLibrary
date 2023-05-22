@@ -19,6 +19,8 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object pButtons: TPanel
@@ -226,6 +228,8 @@ object frmMain: TfrmMain
       SortType = stText
       TabOrder = 0
       ViewStyle = vsReport
+      ExplicitLeft = 2
+      ExplicitTop = 46
     end
     object pTop: TPanel
       Left = 1
@@ -253,7 +257,7 @@ object frmMain: TfrmMain
         ParentFont = False
       end
       object cmbe: TComboBoxEx
-        Left = 99
+        Left = 103
         Top = 14
         Width = 145
         Height = 25
