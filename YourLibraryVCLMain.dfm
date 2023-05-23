@@ -31,7 +31,6 @@ object frmMain: TfrmMain
     Height = 485
     Align = alLeft
     TabOrder = 0
-    ExplicitHeight = 486
     object sdbtAddAuthor: TSpeedButton
       AlignWithMargins = True
       Left = 1
@@ -216,8 +215,6 @@ object frmMain: TfrmMain
     Height = 485
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 424
-    ExplicitHeight = 486
     object lvList: TListView
       Left = 1
       Top = 52
@@ -235,8 +232,6 @@ object frmMain: TfrmMain
       SortType = stText
       TabOrder = 0
       ViewStyle = vsReport
-      ExplicitLeft = 2
-      ExplicitTop = 46
     end
     object pTop: TPanel
       Left = 1
@@ -250,7 +245,6 @@ object frmMain: TfrmMain
       Padding.Right = 3
       Padding.Bottom = 3
       TabOrder = 1
-      ExplicitWidth = 422
       object lbFilter: TLabel
         Left = 21
         Top = 12
@@ -313,9 +307,6 @@ object frmMain: TfrmMain
           Bevel = pbNone
           Width = 250
         end>
-      ExplicitLeft = 2
-      ExplicitTop = 461
-      ExplicitWidth = 422
     end
   end
   object actlActions: TActionList

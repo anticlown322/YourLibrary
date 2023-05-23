@@ -24,10 +24,11 @@ Type
         PButtons: TPanel;
         BtCancel: TButton;
         LbTitle: TLabel;
-        LbeFiled1: TLabeledEdit;
+        LbeField1: TLabeledEdit;
         LbeField2: TLabeledEdit;
         LbeField3: TLabeledEdit;
         LbFinalChoiceRequirement: TLabel;
+        LbeField4: TLabeledEdit;
         Procedure FormShow(Sender: TObject);
     Public
         Function ShowForNewRec(): TModalResult;
@@ -41,22 +42,49 @@ Implementation
 
 {$R *.dfm}
 
+{ фнукции и процедуры }
+
 Function TfrmEditor.ShowForNewRec(): TModalResult;
 Begin
-    LbTitle.Left := 135;
+    BtContinue.Caption := 'Создать';
+    LbTitle.Left := 60;
     LbTitle.Caption := 'Новая запись';
     Case FrmMain.LibraryEng.Category Of
-        Author:
+        Writer:
             Begin
-
+                LbTitle.Caption := LbTitle.Caption + ' о писателе';
+                LbeField1.EditLabel.Caption := 'Код писателя: ';
+                LbeField1.TextHint := 'Введите код...';
+                LbeField2.EditLabel.Caption := 'Ф.И.О. писателя: ';
+                LbeField2.TextHint := 'Введите Ф.И.О. ...';
+                LbeField3.Visible := True;
+                LbeField3.EditLabel.Caption := 'Гражданство писателя: ';
+                LbeField3.TextHint := 'Введите гражданство...';
+                LbeField4.Visible := False;
             End;
         Book:
             Begin
-
+                LbTitle.Caption := LbTitle.Caption + ' о книге';
+                LbeField1.EditLabel.Caption := 'Код книги: ';
+                LbeField1.TextHint := 'Введите код книги...';
+                LbeField2.EditLabel.Caption := 'Название книги: ';
+                LbeField2.TextHint := 'Введите название книги...';
+                LbeField3.Visible := True;
+                LbeField3.EditLabel.Caption := 'Язык издания: ';
+                LbeField3.TextHint := 'Введите язык...';
+                LbeField4.Visible := True;
+                LbeField4.EditLabel.Caption := 'Год публикации: ';
+                LbeField4.TextHint := 'Введите код публикации...';
             End;
-        Writer:
+        Author:
             Begin
-
+                LbTitle.Caption := LbTitle.Caption + ' об авторе';
+                LbeField1.EditLabel.Caption := 'Код писателя: ';
+                LbeField1.TextHint := 'Введите код писателя...';
+                LbeField2.EditLabel.Caption := 'Код книги: ';
+                LbeField2.TextHint := 'Введите код книги...';
+                LbeField3.Visible := False;
+                LbeField4.Visible := False;
             End;
     End;
 
@@ -71,27 +99,47 @@ Begin
     }
 End;
 
-Procedure TfrmEditor.FormShow(Sender: TObject);
-Begin
-    LbeFiled1.SetFocus;
-End;
-
 Function TfrmEditor.ShowForEditing(Var Obj: TObject): TModalResult;
 Begin
+    BtContinue.Caption := 'Изменить';
     LbTitle.Left := FrmEditor.Width Div 3;
     LbTitle.Caption := 'Редактирование записи';
     Case FrmMain.LibraryEng.Category Of
         Author:
             Begin
-
+                LbTitle.Caption := LbTitle.Caption + ' о писателе';
+                LbeField1.EditLabel.Caption := 'Код писателя: ';
+                LbeField1.Text := '';
+                LbeField2.EditLabel.Caption := 'Ф.И.О. писателя: ';
+                LbeField2.Text := '';
+                LbeField3.Visible := True;
+                LbeField3.EditLabel.Caption := 'Гражданство писателя: ';
+                LbeField3.Text := '';
+                LbeField4.Visible := False;
             End;
         Book:
             Begin
-
+                LbTitle.Caption := LbTitle.Caption + ' о книге';
+                LbeField1.EditLabel.Caption := 'Код книги: ';
+                LbeField1.Text := '';
+                LbeField2.EditLabel.Caption := 'Название книги: ';
+                LbeField2.Text := '';
+                LbeField3.Visible := True;
+                LbeField3.EditLabel.Caption := 'Язык издания: ';
+                LbeField3.Text := '';
+                LbeField4.Visible := True;
+                LbeField4.EditLabel.Caption := 'Год публикации: ';
+                LbeField4.Text := '';
             End;
         Writer:
             Begin
-
+                LbTitle.Caption := LbTitle.Caption + ' об авторе';
+                LbeField1.EditLabel.Caption := 'Код писателя: ';
+                LbeField1.TextHint := '';
+                LbeField2.EditLabel.Caption := 'Код книги: ';
+                LbeField2.Text := '';
+                LbeField3.Visible := False;
+                LbeField4.Visible := False;
             End;
     End;
     Result := ShowModal;
@@ -108,6 +156,13 @@ Begin
       Task.Priority := TPriority(CbPriority.ItemIndex);
       End;
     }
+End;
+
+{ форма }
+
+Procedure TfrmEditor.FormShow(Sender: TObject);
+Begin
+    LbeField1.SetFocus;
 End;
 
 End.

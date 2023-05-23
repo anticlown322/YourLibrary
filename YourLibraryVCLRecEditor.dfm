@@ -4,7 +4,7 @@ object frmEditor: TfrmEditor
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1056#1077#1076#1072#1082#1090#1086#1088
-  ClientHeight = 275
+  ClientHeight = 311
   ClientWidth = 294
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -156,32 +156,39 @@ object frmEditor: TfrmEditor
     Left = 0
     Top = 0
     Width = 294
-    Height = 200
+    Height = 236
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 200
     object lbTitle: TLabel
       Left = 240
-      Top = 16
-      Width = 3
-      Height = 13
+      Top = 13
+      Width = 5
+      Height = 19
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
-    object lbeFiled1: TLabeledEdit
+    object lbeField1: TLabeledEdit
       Left = 20
       Top = 56
-      Width = 121
+      Width = 165
       Height = 21
       BevelInner = bvNone
       BevelOuter = bvNone
       EditLabel.Width = 42
       EditLabel.Height = 13
-      EditLabel.Caption = 'lbeFiled1'
+      EditLabel.Caption = 'lbeField1'
       LabelSpacing = 5
       TabOrder = 0
     end
     object lbeField2: TLabeledEdit
       Left = 20
-      Top = 104
-      Width = 121
+      Top = 102
+      Width = 165
       Height = 21
       BevelInner = bvNone
       BevelOuter = bvNone
@@ -194,7 +201,7 @@ object frmEditor: TfrmEditor
     object lbeField3: TLabeledEdit
       Left = 20
       Top = 152
-      Width = 121
+      Width = 165
       Height = 21
       BevelInner = bvNone
       BevelOuter = bvNone
@@ -204,14 +211,28 @@ object frmEditor: TfrmEditor
       LabelSpacing = 5
       TabOrder = 2
     end
+    object lbeField4: TLabeledEdit
+      Left = 20
+      Top = 200
+      Width = 165
+      Height = 21
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      EditLabel.Width = 42
+      EditLabel.Height = 13
+      EditLabel.Caption = 'lbeFiled1'
+      LabelSpacing = 5
+      TabOrder = 3
+    end
   end
   object pButtons: TPanel
     Left = 0
-    Top = 200
+    Top = 236
     Width = 294
     Height = 75
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 200
     object lbFinalChoiceRequirement: TLabel
       Left = 232
       Top = 13
@@ -233,7 +254,7 @@ object frmEditor: TfrmEditor
       Top = 22
       Width = 113
       Height = 35
-      Caption = 'Button1'
+      Caption = #1054#1090#1084#1077#1085#1072
       ModalResult = 2
       TabOrder = 1
     end

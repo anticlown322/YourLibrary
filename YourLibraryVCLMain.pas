@@ -95,7 +95,9 @@ Implementation
 
 {$R *.dfm}
 
-Uses YourLibraryVCLRecEditor;
+Uses
+    YourLibraryVCLRecEditor;
+
 { форма }
 
 Procedure TfrmMain.FormCreate(Sender: TObject);
@@ -125,9 +127,12 @@ End;
 Procedure TfrmMain.UpdateList;
 Var
     I: Integer;
+    Item: TListItem;
 Begin
     LvList.Columns.Clear;
     LvList.Items.Clear;
+
+    // задание вида таблицы
     Case LibraryEng.Category Of
         Writer:
             Begin
@@ -138,10 +143,13 @@ Begin
                 End;
                 LvList.Columns[0].Caption := 'Код';
                 LvList.Columns[0].Width := 80;
+                LvList.Columns[0].MaxWidth := 120;
                 LvList.Columns[1].Caption := 'Ф.И.О.';
                 LvList.Columns[1].Width := (LvList.Width - LvList.Columns[0].Width) Div 2;
+                LvList.Columns[1].MaxWidth := 400;
                 LvList.Columns[2].Caption := 'Наицональность';
-                LvList.Columns[2].Width := LvList.Width - LvList.Columns[1].Width;
+                LvList.Columns[2].Width := LvList.Width - LvList.Columns[1].Width - LvList.Columns[0].Width;
+                LvList.Columns[2].MaxWidth := 300;
             End;
         Book:
             Begin
@@ -152,12 +160,16 @@ Begin
                 End;
                 LvList.Columns[0].Caption := 'Код';
                 LvList.Columns[0].Width := 80;
+                LvList.Columns[0].MaxWidth := 120;
                 LvList.Columns[1].Caption := 'Название';
                 LvList.Columns[1].Width := (LvList.Width - LvList.Columns[0].Width) Div 2;
+                LvList.Columns[1].MaxWidth := 0;
                 LvList.Columns[2].Caption := 'Язык издания';
                 LvList.Columns[2].Width := (LvList.Width - LvList.Columns[0].Width) Div 3 - 1;
+                LvList.Columns[2].MaxWidth := 200;
                 LvList.Columns[3].Caption := 'Год издания';
                 LvList.Columns[3].Width := LvList.Width - LvList.Columns[0].Width - LvList.Columns[1].Width - LvList.Columns[2].Width;
+                LvList.Columns[3].MaxWidth := 100;
             End;
         Author:
             Begin
@@ -168,25 +180,61 @@ Begin
                 End;
                 LvList.Columns[0].Caption := 'Код писателя';
                 LvList.Columns[0].Width := 120;
+                LvList.Columns[0].MaxWidth := 120;
                 LvList.Columns[1].Caption := 'Код книги';
                 LvList.Columns[1].Width := 80;
+                LvList.Columns[1].Width := 120;
             End;
     End;
-    For I := 0 To -1 Do
-    Begin
-        {
-          Item := lvTasks.Items.Add;
-          Item.Caption := Task.Name;
-          Item.SubItems.Add(Task.Worker);
-          Item.SubItems.Add(PriorityNames[Task.Priority]);
-        }
+
+    // копирование списка в таблицу
+    Case LibraryEng.Category Of
+        Writer:
+            Begin
+                If LibraryEng.Writers <> Nil Then
+                    For I := 0 To LibraryEngine.Writers.Count - 1 Do
+                    Begin
+                        Item := LvList.Items.Add;
+//                        Item.Caption := CurrentList.Name;
+//                        Item.SubItems.Add(Task.Worker);
+//                        Item.SubItems.Add(PriorityNames[Task.Priority]);
+                    End
+                Else
+                    Application.MessageBox('Список писателей пуст.', 'Сообщение', MB_ICONINFORMATION);
+            End;
+        Book:
+            Begin
+                If LibraryEng.Books <> Nil Then
+                    For I := 0 To LibraryEngine.Books.Count - 1 Do
+                    Begin
+                        Item := LvList.Items.Add;
+//                        Item.Caption := CurrentList.Name;
+//                        Item.SubItems.Add(Task.Worker);
+//                        Item.SubItems.Add(PriorityNames[Task.Priority]);
+                    End
+                Else
+                    Application.MessageBox('Список книг пуст.', 'Сообщение', MB_ICONINFORMATION);
+            End;
+        Author:
+            Begin
+                If LibraryEng.Authors <> Nil Then
+                    For I := 0 To LibraryEngine.Authors.Count - 1 Do
+                    Begin
+                        Item := LvList.Items.Add;
+//                        Item.Caption := CurrentList.Name;
+//                        Item.SubItems.Add(Task.Worker);
+//                        Item.SubItems.Add(PriorityNames[Task.Priority]);
+                    End
+                Else
+                    Application.MessageBox('Список авторов пуст.', 'Сообщение', MB_ICONINFORMATION);
+            End;
     End;
 End;
 
 Procedure TfrmMain.UpdateState;
 Const
     STATE = 'Текущий статус: ';
-    DELETE_HINT = 'Выделите надпись для удаления';
+    DELETE_HINT = 'Подсказка: Выделите надпись для удаления';
 Begin
     StsbInfo.Panels[1].Text := '';
     Case LibraryEng.State Of
@@ -215,22 +263,9 @@ End;
 
 Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
 Begin
-    AcEditRec.Enabled := LvList.ItemIndex > -1;
-    AcDeleteRec.Enabled := LvList.ItemIndex > -1;
-    AcSearch.Enabled := LvList.ItemIndex > -1;
-End;
-
-Procedure TfrmMain.CmbeCategoriesChange(Sender: TObject);
-Begin
-    Case CmbeCategories.ItemIndex Of
-        0:
-            LibraryEng.Category := Writer;
-        1:
-            LibraryEng.Category := Book;
-        2:
-            LibraryEng.Category := Author;
-    End;
-    UpdateList;
+    AcEditRec.Enabled := LvList.ItemIndex > 0;
+    AcDeleteRec.Enabled := LvList.ItemIndex > 0;
+    AcSearch.Enabled := LvList.ItemIndex > 0;
 End;
 
 Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
@@ -274,6 +309,7 @@ Var
     Res: Integer;
     AuthorObj: TObject;
 Begin
+    LibraryEng.Category := Author;
     Case BtTag Of
         1: // AddRec
             Begin
@@ -311,6 +347,7 @@ Var
     Res: Integer;
     BookObj: TObject;
 Begin
+    LibraryEng.Category := Book;
     Case BtTag Of
         1: // AddRec
             Begin
@@ -348,6 +385,7 @@ Var
     Res: Integer;
     WriterObj: TObject;
 Begin
+    LibraryEng.Category := Writer;
     Case BtTag Of
         1: // AddRec
             Begin
@@ -380,11 +418,24 @@ Begin
     End;
 End;
 
-{ кнопки }
+{ компоненты }
 
 Procedure TfrmMain.SdbtExitClick(Sender: TObject);
 Begin
     Close;
+End;
+
+Procedure TfrmMain.CmbeCategoriesChange(Sender: TObject);
+Begin
+    Case CmbeCategories.ItemIndex Of
+        0:
+            LibraryEng.Category := Writer;
+        1:
+            LibraryEng.Category := Book;
+        2:
+            LibraryEng.Category := Author;
+    End;
+    UpdateList;
 End;
 
 End.
