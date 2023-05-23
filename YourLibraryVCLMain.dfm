@@ -1,10 +1,11 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'YourLibrary'
-  ClientHeight = 490
-  ClientWidth = 627
+  ClientHeight = 489
+  ClientWidth = 554
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -26,15 +27,16 @@ object frmMain: TfrmMain
   object pButtons: TPanel
     Left = 2
     Top = 2
-    Width = 50
-    Height = 486
+    Width = 52
+    Height = 485
     Align = alLeft
     TabOrder = 0
+    ExplicitHeight = 486
     object sdbtAddAuthor: TSpeedButton
       AlignWithMargins = True
       Left = 1
-      Top = 112
-      Width = 48
+      Top = 166
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -48,12 +50,13 @@ object frmMain: TfrmMain
       ShowHint = True
       ExplicitLeft = 0
       ExplicitTop = 58
+      ExplicitWidth = 48
     end
     object sdbtHelp: TSpeedButton
       AlignWithMargins = True
       Left = 1
       Top = 382
-      Width = 48
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -66,12 +69,13 @@ object frmMain: TfrmMain
       ParentShowHint = False
       ShowHint = True
       ExplicitLeft = 0
+      ExplicitWidth = 48
     end
     object sdbtDeveloperInfo: TSpeedButton
       AlignWithMargins = True
       Left = 1
       Top = 328
-      Width = 48
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -84,12 +88,13 @@ object frmMain: TfrmMain
       ParentShowHint = False
       ShowHint = True
       ExplicitLeft = 0
+      ExplicitWidth = 48
     end
     object sdbtFind: TSpeedButton
       AlignWithMargins = True
       Left = 1
-      Top = 220
-      Width = 48
+      Top = 274
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -102,12 +107,14 @@ object frmMain: TfrmMain
       ParentShowHint = False
       ShowHint = True
       ExplicitLeft = 0
+      ExplicitTop = 220
+      ExplicitWidth = 48
     end
     object sdbtSaveToFile: TSpeedButton
       AlignWithMargins = True
       Left = 1
-      Top = 166
-      Width = 48
+      Top = 220
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -121,13 +128,14 @@ object frmMain: TfrmMain
       ShowHint = True
       ExplicitLeft = 0
       ExplicitTop = 112
+      ExplicitWidth = 48
     end
     object sdbtDeleteRecord: TSpeedButton
-      Tag = 2
+      Tag = 3
       AlignWithMargins = True
       Left = 1
-      Top = 58
-      Width = 48
+      Top = 112
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -146,7 +154,7 @@ object frmMain: TfrmMain
       AlignWithMargins = True
       Left = 1
       Top = 436
-      Width = 48
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -159,13 +167,14 @@ object frmMain: TfrmMain
       ShowHint = True
       OnClick = sdbtExitClick
       ExplicitLeft = 0
+      ExplicitWidth = 48
     end
     object sdbtEdit: TSpeedButton
-      Tag = 3
+      Tag = 2
       AlignWithMargins = True
       Left = 1
-      Top = 274
-      Width = 48
+      Top = 58
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -184,7 +193,7 @@ object frmMain: TfrmMain
       AlignWithMargins = True
       Left = 1
       Top = 4
-      Width = 48
+      Width = 50
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
@@ -197,30 +206,28 @@ object frmMain: TfrmMain
       ShowHint = True
       OnClick = acOptionChoiceExecute
       ExplicitLeft = 0
+      ExplicitWidth = 48
     end
   end
   object pClient: TPanel
-    Left = 52
+    Left = 54
     Top = 2
-    Width = 573
-    Height = 486
+    Width = 498
+    Height = 485
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 424
+    ExplicitHeight = 486
     object lvList: TListView
       Left = 1
       Top = 52
-      Width = 571
-      Height = 403
+      Width = 496
+      Height = 402
       Align = alClient
-      Columns = <
-        item
-        end
-        item
-          Alignment = taCenter
-        end
-        item
-          Alignment = taCenter
-        end>
+      Columns = <>
+      FlatScrollBars = True
+      HotTrack = True
+      MultiSelect = True
       GroupHeaderImages = vilImages_48
       ReadOnly = True
       RowSelect = True
@@ -234,7 +241,7 @@ object frmMain: TfrmMain
     object pTop: TPanel
       Left = 1
       Top = 1
-      Width = 571
+      Width = 496
       Height = 51
       Align = alTop
       BevelOuter = bvNone
@@ -243,6 +250,7 @@ object frmMain: TfrmMain
       Padding.Right = 3
       Padding.Bottom = 3
       TabOrder = 1
+      ExplicitWidth = 422
       object lbFilter: TLabel
         Left = 21
         Top = 12
@@ -256,8 +264,8 @@ object frmMain: TfrmMain
         Font.Style = []
         ParentFont = False
       end
-      object cmbe: TComboBoxEx
-        Left = 103
+      object cmbeCategories: TComboBoxEx
+        Left = 95
         Top = 14
         Width = 145
         Height = 25
@@ -285,22 +293,36 @@ object frmMain: TfrmMain
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+        OnChange = cmbeCategoriesChange
         Images = vilIcons_16
       end
     end
     object stsbInfo: TStatusBar
       Left = 1
-      Top = 455
-      Width = 571
+      Top = 454
+      Width = 496
       Height = 30
-      Panels = <>
+      Panels = <
+        item
+          Bevel = pbNone
+          Text = #1058#1077#1082#1091#1097#1080#1081' '#1088#1077#1078#1080#1084': '#1085#1077' '#1074#1099#1073#1088#1072#1085
+          Width = 250
+        end
+        item
+          Alignment = taRightJustify
+          Bevel = pbNone
+          Width = 250
+        end>
+      ExplicitLeft = 2
+      ExplicitTop = 461
+      ExplicitWidth = 422
     end
   end
   object actlActions: TActionList
     Images = vilImages_48
     OnUpdate = actlActionsUpdate
-    Left = 472
-    Top = 456
+    Left = 272
+    Top = 8
     object acHelpContents: TAction
       Category = 'Form'
       ShortCut = 112
@@ -396,25 +418,25 @@ object frmMain: TfrmMain
     ImageCollection = dtmdImages.imcForButtons
     Width = 48
     Height = 48
-    Left = 448
-    Top = 456
+    Left = 184
+    Top = 8
   end
   object BalloonHint: TBalloonHint
     Delay = 300
-    Left = 502
-    Top = 456
+    Left = 214
+    Top = 8
   end
   object svdSaveToFileDialog: TSaveDialog
     Filter = 'Text Files|*.txt'
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
-    Left = 566
-    Top = 456
+    Left = 334
+    Top = 8
   end
   object opdOpenFromFileDialog: TOpenDialog
     Filter = 'Text Files|*.txt'
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing]
-    Left = 534
-    Top = 456
+    Left = 302
+    Top = 8
   end
   object vilIcons_16: TVirtualImageList
     DisabledGrayscale = False
@@ -457,13 +479,13 @@ object frmMain: TfrmMain
         Name = 'author'
       end>
     ImageCollection = dtmdImages.imcForIcons
-    Left = 589
-    Top = 459
+    Left = 365
+    Top = 3
   end
   object ppabChoice: TPopupActionBar
     Images = vilIcons_16
-    Left = 421
-    Top = 459
+    Left = 245
+    Top = 3
     StyleName = 'XP Style'
     object miWriter: TMenuItem
       Break = mbBreak

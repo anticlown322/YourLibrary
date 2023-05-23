@@ -1,17 +1,18 @@
-program YourLibrary;
+Program YourLibrary;
 
 uses
   Vcl.Forms,
-  YourLibraryVCLMain in 'YourLibraryVCLMain.pas' {frmMain},
-  YourLibraryVCLLoadingScreen in 'YourLibraryVCLLoadingScreen.pas' {frmLoadingScreen},
-  YourLibraryEngine in 'YourLibraryEngine.pas',
   YourLibraryDataImages in 'YourLibraryDataImages.pas' {dtmdImages: TDataModule},
-  YourLibraryVCLRecEditor in 'YourLibraryVCLRecEditor.pas' {Form1};
+  YourLibraryEngine in 'YourLibraryEngine.pas',
+  YourLibraryVCLLoadingScreen in 'YourLibraryVCLLoadingScreen.pas' {frmLoadingScreen},
+  YourLibraryVCLMain in 'YourLibraryVCLMain.pas' {frmMain},
+  YourLibraryVCLRecEditor in 'YourLibraryVCLRecEditor.pas' {frmEditor},
+  YourLibraryVCLSearch in 'YourLibraryVCLSearch.pas' {frmSearch};
 
 {$R *.res}
 
-begin
-  Application.Initialize;
+Begin
+    Application.Initialize;
 
     FrmLoadingScreen := TfrmLoadingScreen.Create(Application);
     FrmLoadingScreen.Show;
@@ -20,9 +21,11 @@ begin
     FrmLoadingScreen.Hide;
 
     Application.MainFormOnTaskbar := False;
-  Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmLoadingScreen, frmLoadingScreen);
-  Application.CreateForm(TdtmdImages, dtmdImages);
-  Application.CreateForm(TForm1, Form1);
+    Application.CreateForm(TFrmMain, FrmMain);
+  Application.CreateForm(TDtmdImages, DtmdImages);
+  Application.CreateForm(TFrmLoadingScreen, FrmLoadingScreen);
+  Application.CreateForm(TFrmEditor, FrmEditor);
+  Application.CreateForm(TFrmSearch, FrmSearch);
   Application.Run;
-end.
+
+End.

@@ -1,25 +1,113 @@
-unit YourLibraryVCLRecEditor;
+Unit YourLibraryVCLRecEditor;
 
-interface
+Interface
 
-uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls;
+Uses
+    Winapi.Windows,
+    Winapi.Messages,
+    System.SysUtils,
+    System.Variants,
+    System.Classes,
+    Vcl.Graphics,
+    Vcl.Controls,
+    Vcl.Forms,
+    Vcl.Dialogs,
+    Vcl.ExtCtrls,
+    YourLibraryEngine,
+    YourLibraryVCLMain,
+    Vcl.StdCtrls;
 
-type
-  TForm1 = class(TForm)
-    Panel1: TPanel;
-  private
-    { Private declarations }
-  public
-    { Public declarations }
-  end;
+Type
+    TfrmEditor = Class(TForm)
+        PClient: TPanel;
+        BtContinue: TButton;
+        PButtons: TPanel;
+        BtCancel: TButton;
+        LbTitle: TLabel;
+        LbeFiled1: TLabeledEdit;
+        LbeField2: TLabeledEdit;
+        LbeField3: TLabeledEdit;
+        LbFinalChoiceRequirement: TLabel;
+        Procedure FormShow(Sender: TObject);
+    Public
+        Function ShowForNewRec(): TModalResult;
+        Function ShowForEditing(Var Obj: TObject): TModalResult;
+    End;
 
-var
-  Form1: TForm1;
+Var
+    FrmEditor: TfrmEditor;
 
-implementation
+Implementation
 
 {$R *.dfm}
 
-end.
+Function TfrmEditor.ShowForNewRec(): TModalResult;
+Begin
+    LbTitle.Left := 135;
+    LbTitle.Caption := 'Новая запись';
+    Case FrmMain.LibraryEng.Category Of
+        Author:
+            Begin
+
+            End;
+        Book:
+            Begin
+
+            End;
+        Writer:
+            Begin
+
+            End;
+    End;
+
+    Result := ShowModal;
+    {
+      If Result = MrOk Then
+      Begin
+      Task.Name := EditTitle.Text;
+      Task.Worker := EditWorker.Text;
+      Task.Priority := TPriority(CbPriority.ItemIndex);
+      End;
+    }
+End;
+
+Procedure TfrmEditor.FormShow(Sender: TObject);
+Begin
+    LbeFiled1.SetFocus;
+End;
+
+Function TfrmEditor.ShowForEditing(Var Obj: TObject): TModalResult;
+Begin
+    LbTitle.Left := FrmEditor.Width Div 3;
+    LbTitle.Caption := 'Редактирование записи';
+    Case FrmMain.LibraryEng.Category Of
+        Author:
+            Begin
+
+            End;
+        Book:
+            Begin
+
+            End;
+        Writer:
+            Begin
+
+            End;
+    End;
+    Result := ShowModal;
+    {
+      EditTitle.Text := Task.Name;
+      EditWorker.Text := Task.Worker;
+      CbPriority.ItemIndex := Integer(Task.Priority);
+
+      Result := ShowModal;
+      If Result = MrOk Then
+      Begin
+      Task.Name := EditTitle.Text;
+      Task.Worker := EditWorker.Text;
+      Task.Priority := TPriority(CbPriority.ItemIndex);
+      End;
+    }
+End;
+
+End.

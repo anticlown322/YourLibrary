@@ -49,16 +49,26 @@ Type
 
     { основной класс }
 
+    TChosenCategory = (Writer, Book, Author);
+    TState = (Adding, Deleting, Editing, Searching);
+
     TLibraryEngine = Class(TObject)
     Private
         ListOfWriters: TList;
         ListOfBooks: TList;
         ListOfAuthors: TList;
+        CurrentState: TState;
+        CurrentCategory: TChosenCategory;
     Public
         Property Writers: TList Read ListOfWriters Write ListOfWriters;
         Property Books: TList Read ListOfBooks Write ListOfBooks;
         Property Authors: TList Read ListOfAuthors Write ListOfAuthors;
+        Property State: TState Read CurrentState Write CurrentState;
+        Property Category: TChosenCategory Read CurrentCategory Write CurrentCategory;
     End;
+
+Const
+    StateNames: Array [TState] Of String = ('Добавление записи', 'Удаление записи', 'Редактирование записи', 'Поиск');
 
 Implementation
 

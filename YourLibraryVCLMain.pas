@@ -58,7 +58,7 @@ Type
         AcEditRec: TAction;
         SdbtAdd: TSpeedButton;
         AcSearch: TAction;
-        Cmbe: TComboBoxEx;
+        CmbeCategories: TComboBoxEx;
         VilIcons_16: TVirtualImageList;
         LbFilter: TLabel;
         AcOptionChoice: TAction;
@@ -77,9 +77,12 @@ Type
         Procedure MiAuthorClick(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
+        Procedure CmbeCategoriesChange(Sender: TObject);
     Private
         ButtonTag: Integer;
         LibraryEngine: TLibraryEngine;
+        Procedure UpdateList;
+        Procedure UpdateState;
     Public
         Property BtTag: Integer Read ButtonTag Write ButtonTag;
         Property LibraryEng: TLibraryEngine Read LibraryEngine Write LibraryEngine;
@@ -91,6 +94,8 @@ Var
 Implementation
 
 {$R *.dfm}
+
+Uses YourLibraryVCLRecEditor;
 { форма }
 
 Procedure TfrmMain.FormCreate(Sender: TObject);
@@ -117,6 +122,90 @@ Begin
     End;
 End;
 
+Procedure TfrmMain.UpdateList;
+Var
+    I: Integer;
+Begin
+    LvList.Columns.Clear;
+    LvList.Items.Clear;
+    Case LibraryEng.Category Of
+        Writer:
+            Begin
+                For I := 0 To 2 Do
+                Begin
+                    LvList.Columns.Add;
+                    LvList.Columns[I].AutoSize := True;
+                End;
+                LvList.Columns[0].Caption := 'Код';
+                LvList.Columns[0].Width := 80;
+                LvList.Columns[1].Caption := 'Ф.И.О.';
+                LvList.Columns[1].Width := (LvList.Width - LvList.Columns[0].Width) Div 2;
+                LvList.Columns[2].Caption := 'Наицональность';
+                LvList.Columns[2].Width := LvList.Width - LvList.Columns[1].Width;
+            End;
+        Book:
+            Begin
+                For I := 0 To 3 Do
+                Begin
+                    LvList.Columns.Add;
+                    LvList.Columns[I].AutoSize := True;
+                End;
+                LvList.Columns[0].Caption := 'Код';
+                LvList.Columns[0].Width := 80;
+                LvList.Columns[1].Caption := 'Название';
+                LvList.Columns[1].Width := (LvList.Width - LvList.Columns[0].Width) Div 2;
+                LvList.Columns[2].Caption := 'Язык издания';
+                LvList.Columns[2].Width := (LvList.Width - LvList.Columns[0].Width) Div 3 - 1;
+                LvList.Columns[3].Caption := 'Год издания';
+                LvList.Columns[3].Width := LvList.Width - LvList.Columns[0].Width - LvList.Columns[1].Width - LvList.Columns[2].Width;
+            End;
+        Author:
+            Begin
+                For I := 0 To 1 Do
+                Begin
+                    LvList.Columns.Add;
+                    LvList.Columns[I].AutoSize := True;
+                End;
+                LvList.Columns[0].Caption := 'Код писателя';
+                LvList.Columns[0].Width := 120;
+                LvList.Columns[1].Caption := 'Код книги';
+                LvList.Columns[1].Width := 80;
+            End;
+    End;
+    For I := 0 To -1 Do
+    Begin
+        {
+          Item := lvTasks.Items.Add;
+          Item.Caption := Task.Name;
+          Item.SubItems.Add(Task.Worker);
+          Item.SubItems.Add(PriorityNames[Task.Priority]);
+        }
+    End;
+End;
+
+Procedure TfrmMain.UpdateState;
+Const
+    STATE = 'Текущий статус: ';
+    DELETE_HINT = 'Выделите надпись для удаления';
+Begin
+    StsbInfo.Panels[1].Text := '';
+    Case LibraryEng.State Of
+        Adding:
+            StsbInfo.Panels[0].Text := STATE + StateNames[Adding];
+        Deleting:
+            Begin
+                StsbInfo.Panels[0].Text := STATE + StateNames[Deleting];
+                StsbInfo.Panels[1].Text := DELETE_HINT;
+            End;
+        Editing:
+            Begin
+                StsbInfo.Panels[0].Text := STATE + StateNames[Editing];
+            End;
+        Searching:
+            StsbInfo.Panels[0].Text := STATE + StateNames[Searching];
+    End;
+End;
+
 Procedure TfrmMain.FormDestroy(Sender: TObject);
 Begin
     LibraryEngine.Free;
@@ -129,6 +218,19 @@ Begin
     AcEditRec.Enabled := LvList.ItemIndex > -1;
     AcDeleteRec.Enabled := LvList.ItemIndex > -1;
     AcSearch.Enabled := LvList.ItemIndex > -1;
+End;
+
+Procedure TfrmMain.CmbeCategoriesChange(Sender: TObject);
+Begin
+    Case CmbeCategories.ItemIndex Of
+        0:
+            LibraryEng.Category := Writer;
+        1:
+            LibraryEng.Category := Book;
+        2:
+            LibraryEng.Category := Author;
+    End;
+    UpdateList;
 End;
 
 Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
@@ -157,6 +259,7 @@ Procedure TfrmMain.AcOptionChoiceExecute(Sender: TObject);
 Var
     Pt: TPoint;
 Begin
+    Pt.X := 1;
     With Sender As TSpeedButton Do
     Begin
         BtTag := (Sender As TSpeedButton).Tag;
@@ -167,55 +270,112 @@ Begin
 End;
 
 Procedure TfrmMain.MiAuthorClick(Sender: TObject);
+Var
+    Res: Integer;
+    AuthorObj: TObject;
 Begin
     Case BtTag Of
         1: // AddRec
             Begin
-
+                LvList.SetFocus;
+                LibraryEngine.State := Adding;
+                UpdateState;
+                Res := FrmEditor.ShowForNewRec();
+                If Res = MrCancel Then
+                    Exit;
             End;
-        2: // DeleteRec
+        2: // EditRed
             Begin
-
+                LibraryEngine.State := Editing;
+                UpdateState;
+                If LibraryEng.Authors <> Nil Then
+                Begin
+                    AuthorObj := LibraryEng.Authors[LvList.Selected.Index];
+                    Res := FrmEditor.ShowForEditing(AuthorObj);
+                    If Res = MrCancel Then
+                        Exit;
+                End
+                Else
+                    Application.MessageBox('Редактирование невозможно! В списке авторов нет записей.', 'Предупреждение', MB_ICONWARNING);
             End;
-        3: // EditRed
+        3: // DeleteRec
             Begin
-
+                LibraryEngine.State := Deleting;
+                UpdateState;
             End;
     End;
 End;
 
 Procedure TfrmMain.MiBookClick(Sender: TObject);
+Var
+    Res: Integer;
+    BookObj: TObject;
 Begin
     Case BtTag Of
         1: // AddRec
             Begin
-
+                LvList.SetFocus;
+                LibraryEngine.State := Adding;
+                UpdateState;
+                Res := FrmEditor.ShowForNewRec();
+                If Res = MrCancel Then
+                    Exit;
             End;
-        2: // DeleteRec
+        2: // EditRed
             Begin
-
+                LibraryEngine.State := Editing;
+                UpdateState;
+                If LibraryEng.Books <> Nil Then
+                Begin
+                    BookObj := LibraryEng.Books[LvList.Selected.Index];
+                    Res := FrmEditor.ShowForEditing(BookObj);
+                    If Res = MrCancel Then
+                        Exit;
+                End
+                Else
+                    Application.MessageBox('Редактирование невозможно! В списке книг нет записей.', 'Предупреждение', MB_ICONWARNING);
             End;
-        3: // EditRed
+        3: // DeleteRec
             Begin
-
+                LibraryEngine.State := Deleting;
+                UpdateState;
             End;
     End;
 End;
 
 Procedure TfrmMain.MiWriterClick(Sender: TObject);
+Var
+    Res: Integer;
+    WriterObj: TObject;
 Begin
     Case BtTag Of
         1: // AddRec
             Begin
-
+                LvList.SetFocus;
+                LibraryEngine.State := Adding;
+                UpdateState;
+                Res := FrmEditor.ShowForNewRec();
+                If Res = MrCancel Then
+                    Exit;
             End;
-        2: // DeleteRec
+        2: // EditRed
             Begin
-
+                LibraryEngine.State := Editing;
+                UpdateState;
+                If LibraryEng.Writers <> Nil Then
+                Begin
+                    WriterObj := LibraryEng.Writers[LvList.Selected.Index];
+                    Res := FrmEditor.ShowForEditing(WriterObj);
+                    If Res = MrCancel Then
+                        Exit;
+                End
+                Else
+                    Application.MessageBox('Редактирование невозможно! В списке писателей нет записей.', 'Предупреждение', MB_ICONWARNING);
             End;
-        3: // EditRed
+        3: // DeleteRec
             Begin
-
+                LibraryEngine.State := Deleting;
+                UpdateState;
             End;
     End;
 End;
