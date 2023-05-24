@@ -15,6 +15,7 @@ Uses
     Vcl.ComCtrls,
     Vcl.ExtCtrls,
     System.Actions,
+    System.Generics.Collections,
     Vcl.ActnList,
     System.ImageList,
     Vcl.ImgList,
@@ -82,6 +83,8 @@ Type
         Procedure AcEditRecExecute(Sender: TObject);
         Procedure AcSaveToFileExecute(Sender: TObject);
         Procedure AcOpenFromFileExecute(Sender: TObject);
+        Procedure LvListClick(Sender: TObject);
+        Procedure AcDeleteRecExecute(Sender: TObject);
     Private
         ButtonTag: Integer;
         LibraryEngine: TLibraryEngine;
@@ -107,6 +110,9 @@ Uses
 Procedure TfrmMain.FormCreate(Sender: TObject);
 Begin
     LibraryEngine := TLibraryEngine.Create;
+    LibraryEngine.Writers := TObjectList<TObject>.Create;
+    LibraryEngine.Books := TObjectList<TObject>.Create;
+    LibraryEngine.Authors := TObjectList<TObject>.Create;
 End;
 
 Procedure TfrmMain.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
@@ -136,6 +142,7 @@ Var
 Begin
     LvList.Columns.Clear;
     LvList.Items.Clear;
+    CmbeCategories.ItemIndex := LibraryEng.GetCategoryIndex;
 
     // задание вида таблицы
     Case LibraryEng.Category Of
@@ -197,6 +204,7 @@ Begin
         Writer:
             Begin
                 If LibraryEng.Writers <> Nil Then
+                begin
                     For I := 0 To LibraryEng.Writers.Count - 1 Do
                     Begin
                         Obj := LibraryEng.Writers[I];
@@ -205,6 +213,7 @@ Begin
                         Item.SubItems.Add((Obj As TWriter).Name);
                         Item.SubItems.Add((Obj As TWriter).Nationality);
                     End
+                end
                 Else
                     Application.MessageBox('Список писателей пуст.', 'Сообщение', MB_ICONINFORMATION);
             End;
@@ -264,6 +273,9 @@ End;
 
 Procedure TfrmMain.FormDestroy(Sender: TObject);
 Begin
+    LibraryEngine.Writers.Free;
+    LibraryEngine.Books.Free;
+    LibraryEngine.Authors.Free;
     LibraryEngine.Free;
 End;
 
@@ -272,27 +284,27 @@ End;
 Procedure TfrmMain.MiAuthorClick(Sender: TObject);
 Begin
     LibraryEng.Category := Author;
+    LibraryEng.List := LibraryEng.Authors;
     Case BtTag Of
         1: // AddRec
             Begin
                 LvList.SetFocus;
                 LibraryEngine.State := Adding;
-                UpdateState;
                 AcAddRecExecute(Sender);
+                UpdateState;
+                UpdateList;
             End;
         2: // EditRed
             Begin
                 LibraryEngine.State := Editing;
                 UpdateState;
-                If LibraryEng.Authors <> Nil Then
-                    AcEditRecExecute(Sender)
-                Else
-                    Application.MessageBox('Редактирование невозможно! В списке авторов нет записей.', 'Предупреждение', MB_ICONWARNING);
+                UpdateList;
             End;
         3: // DeleteRec
             Begin
                 LibraryEngine.State := Deleting;
                 UpdateState;
+                UpdateList;
             End;
     End;
 End;
@@ -300,6 +312,7 @@ End;
 Procedure TfrmMain.MiBookClick(Sender: TObject);
 Begin
     LibraryEng.Category := Book;
+    LibraryEng.List := LibraryEng.Books;
     Case BtTag Of
         1: // AddRec
             Begin
@@ -307,20 +320,19 @@ Begin
                 LibraryEngine.State := Adding;
                 UpdateState;
                 AcAddRecExecute(Sender);
+                UpdateList;
             End;
         2: // EditRed
             Begin
                 LibraryEngine.State := Editing;
                 UpdateState;
-                If LibraryEng.Books <> Nil Then
-                    AcEditRecExecute(Sender)
-                Else
-                    Application.MessageBox('Редактирование невозможно! В списке книг нет записей.', 'Предупреждение', MB_ICONWARNING);
+                UpdateList;
             End;
         3: // DeleteRec
             Begin
                 LibraryEngine.State := Deleting;
                 UpdateState;
+                UpdateList;
             End;
     End;
 End;
@@ -328,6 +340,7 @@ End;
 Procedure TfrmMain.MiWriterClick(Sender: TObject);
 Begin
     LibraryEng.Category := Writer;
+    LibraryEng.List := LibraryEng.Writers;
     Case BtTag Of
         1: // AddRec
             Begin
@@ -335,27 +348,21 @@ Begin
                 LibraryEngine.State := Adding;
                 UpdateState;
                 AcAddRecExecute(Sender);
+                UpdateList;
             End;
         2: // EditRed
             Begin
                 LibraryEngine.State := Editing;
                 UpdateState;
-                If LibraryEng.Writers <> Nil Then
-                    AcEditRecExecute(Sender)
-                Else
-                    Application.MessageBox('Редактирование невозможно! В списке писателей нет записей.', 'Предупреждение', MB_ICONWARNING);
+                UpdateList;
             End;
         3: // DeleteRec
             Begin
                 LibraryEngine.State := Deleting;
                 UpdateState;
+                UpdateList;
             End;
     End;
-End;
-
-Procedure TfrmMain.SdbtExitClick(Sender: TObject);
-Begin
-    Close;
 End;
 
 Procedure TfrmMain.CmbeCategoriesChange(Sender: TObject);
@@ -369,6 +376,29 @@ Begin
             LibraryEng.Category := Author;
     End;
     UpdateList;
+End;
+
+Procedure TfrmMain.LvListClick(Sender: TObject);
+Begin
+    Case LibraryEng.State Of
+        Deleting:
+            If LvList.Items.Count > 0 Then
+            Begin
+                AcDeleteRecExecute(Sender);
+                Updatelist;
+            End;
+        Editing:
+            If LvList.Items.Count > 0 Then
+            Begin
+                AcEditRecExecute(Sender);
+                Updatelist;
+            End;
+    End;
+End;
+
+Procedure TfrmMain.SdbtExitClick(Sender: TObject);
+Begin
+    Close;
 End;
 
 {
@@ -387,11 +417,13 @@ End;
 Procedure TfrmMain.AcAddRecExecute(Sender: TObject);
 Var
     Res: Integer;
+    Obj: TObject;
 Begin
     LvList.SetFocus;
-    Res := FrmEditor.ShowForNewRec();
+    Res := FrmEditor.ShowForNewRec(Obj);
     If Res = MrCancel Then
         Exit;
+    LibraryEng.List_AddItem(Obj, LibraryEng.List);
 End;
 
 Procedure TfrmMain.AcEditRecExecute(Sender: TObject);
@@ -399,11 +431,15 @@ Var
     Res: Integer;
 Begin
     LvList.SetFocus;
-    // TaskList_GetItem(lvTasks.ItemIndex, Task);
-    Res := FrmEditor.ShowForEditing();
-    If Res = mrCancel Then
+    Res := FrmEditor.ShowForEditing(LvList.Selected.Index);
+    If Res = MrCancel Then // тут необязательно
         Exit;
-    // TaskList_SetItem(LvTasks.ItemIndex, Task);
+End;
+
+Procedure TfrmMain.AcDeleteRecExecute(Sender: TObject);
+Begin
+    LvList.SetFocus;
+    LibraryEng.List_RemoveItem(LvList.Selected.Index, LibraryEng.List);
 End;
 
 { actionlist - form }

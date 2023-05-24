@@ -232,6 +232,7 @@ object frmMain: TfrmMain
       SortType = stText
       TabOrder = 0
       ViewStyle = vsReport
+      OnClick = lvListClick
     end
     object pTop: TPanel
       Left = 1
@@ -329,6 +330,7 @@ object frmMain: TfrmMain
     end
     object acDeleteRec: TAction
       Category = 'Record'
+      OnExecute = acDeleteRecExecute
     end
     object acOpenFromFile: TAction
       Category = 'Options'

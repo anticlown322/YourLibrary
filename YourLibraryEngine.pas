@@ -3,7 +3,8 @@ Unit YourLibraryEngine;
 Interface
 
 Uses
-    System.Classes;
+    System.Classes,
+    System.Generics.Collections;
 
 Type
 
@@ -55,23 +56,33 @@ Type
 
     TLibraryEngine = Class(TObject)
     Private
-        ListOfWriters: TList;
-        ListOfBooks: TList;
-        ListOfAuthors: TList;
+        ListOfWriters: TObjectList<TObject>;
+        ListOfBooks: TObjectList<TObject>;
+        ListOfAuthors: TObjectList<TObject>;
         CurrentState: TState;
         CurrentCategory: TChosenCategory;
+        CurrentList: TObjectList<TObject>;
     Public
-        Property Writers: TList Read ListOfWriters Write ListOfWriters;
-        Property Books: TList Read ListOfBooks Write ListOfBooks;
-        Property Authors: TList Read ListOfAuthors Write ListOfAuthors;
+        Property Writers: TObjectList<TObject> Read ListOfWriters Write ListOfWriters;
+        Property Books: TObjectList<TObject> Read ListOfBooks Write ListOfBooks;
+        Property Authors: TObjectList<TObject> Read ListOfAuthors Write ListOfAuthors;
         Property State: TState Read CurrentState Write CurrentState;
         Property Category: TChosenCategory Read CurrentCategory Write CurrentCategory;
+        Property List: TObjectList<TObject> Read CurrentList Write CurrentList;
+        Function GetCategoryIndex(): Integer;
+        Function List_GetCount(Const List: TObjectList<TObject>): Integer;
+        Procedure List_AddItem(Const Obj: TObject; List: TObjectList<TObject>);
+        Procedure List_GetItem(Index: Integer; Var Obj: TObject; List: TObjectList<TObject>);
+        Procedure List_SetItem(Index: Integer; Const Obj: TObject; List: TObjectList<TObject>);
+        Procedure List_RemoveItem(Index: Integer; List: TObjectList<TObject>);
     End;
 
 Const
     StateNames: Array [TState] Of String = ('Добавление записи', 'Удаление записи', 'Редактирование записи', 'Поиск');
 
 Implementation
+
+{ для подклассов }
 
 Constructor TWriter.Create(Const WriterCode: Integer; Const WriterName: String; Const WriterNationality: String);
 Begin
@@ -92,6 +103,45 @@ Constructor TAuthor.Create(Const AuthorBookCode: Integer; Const AuthorWriterCode
 Begin
     Self.AuthorBookCode := AuthorBookCode;
     Self.AuthorWriterCode := AuthorWriterCode;
+End;
+
+{ TLibraryEngine }
+
+Function TLibraryEngine.GetCategoryIndex(): Integer;
+Begin
+    Case Category Of
+        Writer:
+            GetCategoryIndex := 0;
+        Book:
+            GetCategoryIndex := 1;
+        Author:
+            GetCategoryIndex := 2;
+    End;
+End;
+
+Function TLibraryEngine.List_GetCount(Const List: TObjectList<TObject>): Integer;
+Begin
+    List_GetCount := List.Capacity;
+End;
+
+Procedure TLibraryEngine.List_AddItem(Const Obj: TObject; List: TObjectList<TObject>);
+Begin
+    List.Add(Obj);
+End;
+
+Procedure TLibraryEngine.List_GetItem(Index: Integer; Var Obj: TObject; List: TObjectList<TObject>);
+Begin
+    Obj := List.Items[Index];
+End;
+
+Procedure TLibraryEngine.List_SetItem(Index: Integer; Const Obj: TObject; List: TObjectList<TObject>);
+Begin
+    List.Items[Index] := Obj;
+End;
+
+Procedure TLibraryEngine.List_RemoveItem(Index: Integer; List: TObjectList<TObject>);
+Begin
+    List.Delete(Index);
 End;
 
 End.

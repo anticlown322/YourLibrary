@@ -4,7 +4,7 @@ object frmEditor: TfrmEditor
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1056#1077#1076#1072#1082#1090#1086#1088
-  ClientHeight = 311
+  ClientHeight = 355
   ClientWidth = 294
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -156,17 +156,18 @@ object frmEditor: TfrmEditor
     Left = 0
     Top = 0
     Width = 294
-    Height = 236
+    Height = 256
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 236
     object lbTitle: TLabel
       Left = 240
       Top = 13
-      Width = 5
-      Height = 19
+      Width = 4
+      Height = 16
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
+      Font.Height = -13
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -226,9 +227,9 @@ object frmEditor: TfrmEditor
   end
   object pButtons: TPanel
     Left = 0
-    Top = 236
+    Top = 256
     Width = 294
-    Height = 75
+    Height = 99
     Align = alBottom
     TabOrder = 1
     object lbFinalChoiceRequirement: TLabel
@@ -240,7 +241,7 @@ object frmEditor: TfrmEditor
     end
     object btOk: TButton
       Left = 20
-      Top = 22
+      Top = 38
       Width = 113
       Height = 35
       Caption = 'btOk'
@@ -249,7 +250,7 @@ object frmEditor: TfrmEditor
     end
     object btCancel: TButton
       Left = 152
-      Top = 22
+      Top = 38
       Width = 113
       Height = 35
       Caption = #1054#1090#1084#1077#1085#1072

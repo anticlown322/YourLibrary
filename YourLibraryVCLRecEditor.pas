@@ -31,8 +31,8 @@ Type
         LbeField4: TLabeledEdit;
         Procedure FormShow(Sender: TObject);
     Public
-        Function ShowForNewRec(): TModalResult;
-        Function ShowForEditing(): TModalResult;
+        Function ShowForNewRec(Var Obj: TObject): TModalResult;
+        Function ShowForEditing(Const Index: Integer): TModalResult;
     End;
 
 Var
@@ -43,8 +43,13 @@ Implementation
 {$R *.dfm}
 { фнукции и процедуры }
 
-Function TfrmEditor.ShowForNewRec(): TModalResult;
+Function TfrmEditor.ShowForNewRec(Var Obj: TObject): TModalResult;
 Begin
+    LbeField1.Clear;
+    LbeField2.Clear;
+    LbeField3.Clear;
+    LbeField4.Clear;
+
     BtOk.Caption := 'Создать';
     LbTitle.Left := 60;
     LbTitle.Caption := 'Новая запись';
@@ -93,58 +98,69 @@ Begin
         Case FrmMain.LibraryEng.Category Of
             Writer:
                 Begin
-                    ShowMessage('hui');
+                    Obj := TWriter.Create(StrToInt(LbeField1.Text), LbeField2.Text, LbeField3.Text);
                 End;
             Book:
                 Begin
-
+                    Obj := TBook.Create(StrToInt(LbeField1.Text), LbeField2.Text, LbeField3.Text, StrToInt(LbeField4.Text));
                 End;
             Author:
                 Begin
+                    Obj := TAuthor.Create(StrToInt(LbeField1.Text), StrToInt(LbeField2.Text));
                 End;
         End;
     End;
 End;
 
-Function TfrmEditor.ShowForEditing(): TModalResult;
+Function TfrmEditor.ShowForEditing(Const Index: Integer): TModalResult;
+Var
+    Obj: TObject;
 Begin
+    LbeField1.Clear;
+    LbeField2.Clear;
+    LbeField3.Clear;
+    LbeField4.Clear;
+
     BtOk.Caption := 'Изменить';
-    LbTitle.Left := FrmEditor.Width Div 3;
+    LbTitle.Left := FrmEditor.Width Div 10;
     LbTitle.Caption := 'Редактирование записи';
     Case FrmMain.LibraryEng.Category Of
-        Author:
+        Writer:
             Begin
+                Obj := FrmMain.LibraryEng.Writers[Index];
                 LbTitle.Caption := LbTitle.Caption + ' о писателе';
                 LbeField1.EditLabel.Caption := 'Код писателя: ';
-                LbeField1.Text := '';
+                LbeField1.Text := IntToStr((Obj As TWriter).Code);
                 LbeField2.EditLabel.Caption := 'Ф.И.О. писателя: ';
-                LbeField2.Text := '';
+                LbeField2.Text := (Obj As TWriter).Name;
                 LbeField3.Visible := True;
                 LbeField3.EditLabel.Caption := 'Гражданство писателя: ';
-                LbeField3.Text := '';
+                LbeField3.Text := (Obj As TWriter).Nationality;
                 LbeField4.Visible := False;
             End;
         Book:
             Begin
+                Obj := FrmMain.LibraryEng.Books[Index];
                 LbTitle.Caption := LbTitle.Caption + ' о книге';
                 LbeField1.EditLabel.Caption := 'Код книги: ';
-                LbeField1.Text := '';
+                LbeField1.Text := IntToStr((Obj As TBook).Code);
                 LbeField2.EditLabel.Caption := 'Название книги: ';
-                LbeField2.Text := '';
+                LbeField2.Text := (Obj As TBook).Name;;
                 LbeField3.Visible := True;
                 LbeField3.EditLabel.Caption := 'Язык издания: ';
-                LbeField3.Text := '';
+                LbeField3.Text := (Obj As TBook).Language;
                 LbeField4.Visible := True;
                 LbeField4.EditLabel.Caption := 'Год публикации: ';
-                LbeField4.Text := '';
+                LbeField4.Text := IntToStr((Obj As TBook).PublicationYear);
             End;
-        Writer:
+        Author:
             Begin
+                Obj := FrmMain.LibraryEng.Authors[Index];
                 LbTitle.Caption := LbTitle.Caption + ' об авторе';
                 LbeField1.EditLabel.Caption := 'Код писателя: ';
-                LbeField1.TextHint := '';
+                LbeField1.TextHint := IntToStr((Obj As TAuthor).WriterCode);
                 LbeField2.EditLabel.Caption := 'Код книги: ';
-                LbeField2.Text := '';
+                LbeField2.Text := IntToStr((Obj As TAuthor).BookCode);
                 LbeField3.Visible := False;
                 LbeField4.Visible := False;
             End;
@@ -156,14 +172,21 @@ Begin
         Case FrmMain.LibraryEng.Category Of
             Writer:
                 Begin
-                    ShowMessage('hui');
+                    (Obj As TWriter).Code := StrToInt(LbeField1.Text);
+                    (Obj As TWriter).Name := LbeField2.Text;
+                    (Obj As TWriter).Nationality := LbeField3.Text;
                 End;
             Book:
                 Begin
-
+                    (Obj As TBook).Code := StrToInt(LbeField1.Text);
+                    (Obj As TBook).Name := LbeField2.Text;
+                    (Obj As TBook).Language := LbeField3.Text;
+                    (Obj As TBook).PublicationYear := StrToInt(LbeField4.Text);
                 End;
             Author:
                 Begin
+                    (Obj As TAuthor).WriterCode := StrToInt(LbeField1.Text);
+                    (Obj As TAuthor).BookCode := StrToInt(LbeField2.Text);
                 End;
         End;
     End;
