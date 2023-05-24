@@ -321,9 +321,11 @@ object frmMain: TfrmMain
     end
     object acAddRec: TAction
       Category = 'Record'
+      OnExecute = acAddRecExecute
     end
     object acEditRec: TAction
       Category = 'Record'
+      OnExecute = acEditRecExecute
     end
     object acDeleteRec: TAction
       Category = 'Record'
@@ -331,10 +333,12 @@ object frmMain: TfrmMain
     object acOpenFromFile: TAction
       Category = 'Options'
       ShortCut = 16463
+      OnExecute = acOpenFromFileExecute
     end
     object acSaveToFile: TAction
       Category = 'Options'
       ShortCut = 16467
+      OnExecute = acSaveToFileExecute
     end
     object acDevInfo: TAction
       Category = 'Options'

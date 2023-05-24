@@ -159,7 +159,6 @@ object frmEditor: TfrmEditor
     Height = 236
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 200
     object lbTitle: TLabel
       Left = 240
       Top = 13
@@ -232,7 +231,6 @@ object frmEditor: TfrmEditor
     Height = 75
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 200
     object lbFinalChoiceRequirement: TLabel
       Left = 232
       Top = 13
@@ -240,13 +238,13 @@ object frmEditor: TfrmEditor
       Height = 13
       Alignment = taCenter
     end
-    object btContinue: TButton
+    object btOk: TButton
       Left = 20
       Top = 22
       Width = 113
       Height = 35
-      Caption = 'btContinue'
-      ModalResult = 11
+      Caption = 'btOk'
+      ModalResult = 1
       TabOrder = 0
     end
     object btCancel: TButton

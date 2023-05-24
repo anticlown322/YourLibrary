@@ -78,6 +78,10 @@ Type
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
         Procedure CmbeCategoriesChange(Sender: TObject);
+        Procedure AcAddRecExecute(Sender: TObject);
+        Procedure AcEditRecExecute(Sender: TObject);
+        Procedure AcSaveToFileExecute(Sender: TObject);
+        Procedure AcOpenFromFileExecute(Sender: TObject);
     Private
         ButtonTag: Integer;
         LibraryEngine: TLibraryEngine;
@@ -128,6 +132,7 @@ Procedure TfrmMain.UpdateList;
 Var
     I: Integer;
     Item: TListItem;
+    Obj: TObject;
 Begin
     LvList.Columns.Clear;
     LvList.Items.Clear;
@@ -192,12 +197,13 @@ Begin
         Writer:
             Begin
                 If LibraryEng.Writers <> Nil Then
-                    For I := 0 To LibraryEngine.Writers.Count - 1 Do
+                    For I := 0 To LibraryEng.Writers.Count - 1 Do
                     Begin
+                        Obj := LibraryEng.Writers[I];
                         Item := LvList.Items.Add;
-//                        Item.Caption := CurrentList.Name;
-//                        Item.SubItems.Add(Task.Worker);
-//                        Item.SubItems.Add(PriorityNames[Task.Priority]);
+                        Item.Caption := IntToStr((Obj As TWriter).Code);
+                        Item.SubItems.Add((Obj As TWriter).Name);
+                        Item.SubItems.Add((Obj As TWriter).Nationality);
                     End
                 Else
                     Application.MessageBox('Список писателей пуст.', 'Сообщение', MB_ICONINFORMATION);
@@ -207,10 +213,12 @@ Begin
                 If LibraryEng.Books <> Nil Then
                     For I := 0 To LibraryEngine.Books.Count - 1 Do
                     Begin
+                        Obj := LibraryEng.Books[I];
                         Item := LvList.Items.Add;
-//                        Item.Caption := CurrentList.Name;
-//                        Item.SubItems.Add(Task.Worker);
-//                        Item.SubItems.Add(PriorityNames[Task.Priority]);
+                        Item.Caption := IntToStr((Obj As TBook).Code);
+                        Item.SubItems.Add((Obj As TBook).Name);
+                        Item.SubItems.Add((Obj As TBook).Language);
+                        Item.SubItems.Add(IntToStr((Obj As TBook).PublicationYear));
                     End
                 Else
                     Application.MessageBox('Список книг пуст.', 'Сообщение', MB_ICONINFORMATION);
@@ -220,10 +228,10 @@ Begin
                 If LibraryEng.Authors <> Nil Then
                     For I := 0 To LibraryEngine.Authors.Count - 1 Do
                     Begin
+                        Obj := LibraryEng.Authors[I];
                         Item := LvList.Items.Add;
-//                        Item.Caption := CurrentList.Name;
-//                        Item.SubItems.Add(Task.Worker);
-//                        Item.SubItems.Add(PriorityNames[Task.Priority]);
+                        Item.Caption := IntToStr((Obj As TAuthor).WriterCode);
+                        Item.SubItems.Add(IntToStr((Obj As TAuthor).BookCode));
                     End
                 Else
                     Application.MessageBox('Список авторов пуст.', 'Сообщение', MB_ICONINFORMATION);
@@ -233,7 +241,7 @@ End;
 
 Procedure TfrmMain.UpdateState;
 Const
-    STATE = 'Текущий статус: ';
+    STATE = 'Текущий режим: ';
     DELETE_HINT = 'Подсказка: Выделите надпись для удаления';
 Begin
     StsbInfo.Panels[1].Text := '';
@@ -259,55 +267,9 @@ Begin
     LibraryEngine.Free;
 End;
 
-{ actionlist }
-
-Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
-Begin
-    AcEditRec.Enabled := LvList.ItemIndex > 0;
-    AcDeleteRec.Enabled := LvList.ItemIndex > 0;
-    AcSearch.Enabled := LvList.ItemIndex > 0;
-End;
-
-Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
-Const
-    FIRST_MESSAGE = 'Ф.И.О.: Карась А.С.' + #13#10;
-    SECOND_MESSAGE = 'Группа: 251004' + #13#10;
-    THIRD_MESSAGE = 'Контакты: предварительная запись вживую по адресу' + #13#10;
-    FOURTH_MESSAGE = 'г.Гродно, ул.Мостовая, д.31';
-Begin
-    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE, 'О разработчике');
-End;
-
-Procedure TfrmMain.AcHelpContentsExecute(Sender: TObject);
-Const
-    FIRST_MESSAGE = '                                       Добро пожаловать в YourLibrary!' + #13#10 + #13#10;
-    SECOND_MESSAGE = 'Данная программа позволяет хранить записи с информацией о писателях и книгах, а также об авторстве.' + #13#10;
-    THIRD_MESSAGE =
-        'Для комфотного использования на левой панели представлены горячие кнопки, позволяющие взаимодействовать с приложением наиболее быстро.';
-    FOURTH_MESSAGE = 'Подробная информация по использованию приложения представлена в Руководстве пользователя.' + #13#10;
-    FIFTH_MESSAGE = #13#10 + '                                            Счастливого пользования!';
-Begin
-    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE + FIFTH_MESSAGE, 'Справка');
-End;
-
-Procedure TfrmMain.AcOptionChoiceExecute(Sender: TObject);
-Var
-    Pt: TPoint;
-Begin
-    Pt.X := 1;
-    With Sender As TSpeedButton Do
-    Begin
-        BtTag := (Sender As TSpeedButton).Tag;
-        Pt := Point(Left + Width, Top);
-        Pt := Parent.ClientToScreen(Pt);
-    End;
-    PpabChoice.Popup(Pt.X, Pt.Y);
-End;
+{ компоненты }
 
 Procedure TfrmMain.MiAuthorClick(Sender: TObject);
-Var
-    Res: Integer;
-    AuthorObj: TObject;
 Begin
     LibraryEng.Category := Author;
     Case BtTag Of
@@ -316,21 +278,14 @@ Begin
                 LvList.SetFocus;
                 LibraryEngine.State := Adding;
                 UpdateState;
-                Res := FrmEditor.ShowForNewRec();
-                If Res = MrCancel Then
-                    Exit;
+                AcAddRecExecute(Sender);
             End;
         2: // EditRed
             Begin
                 LibraryEngine.State := Editing;
                 UpdateState;
                 If LibraryEng.Authors <> Nil Then
-                Begin
-                    AuthorObj := LibraryEng.Authors[LvList.Selected.Index];
-                    Res := FrmEditor.ShowForEditing(AuthorObj);
-                    If Res = MrCancel Then
-                        Exit;
-                End
+                    AcEditRecExecute(Sender)
                 Else
                     Application.MessageBox('Редактирование невозможно! В списке авторов нет записей.', 'Предупреждение', MB_ICONWARNING);
             End;
@@ -343,9 +298,6 @@ Begin
 End;
 
 Procedure TfrmMain.MiBookClick(Sender: TObject);
-Var
-    Res: Integer;
-    BookObj: TObject;
 Begin
     LibraryEng.Category := Book;
     Case BtTag Of
@@ -354,21 +306,14 @@ Begin
                 LvList.SetFocus;
                 LibraryEngine.State := Adding;
                 UpdateState;
-                Res := FrmEditor.ShowForNewRec();
-                If Res = MrCancel Then
-                    Exit;
+                AcAddRecExecute(Sender);
             End;
         2: // EditRed
             Begin
                 LibraryEngine.State := Editing;
                 UpdateState;
                 If LibraryEng.Books <> Nil Then
-                Begin
-                    BookObj := LibraryEng.Books[LvList.Selected.Index];
-                    Res := FrmEditor.ShowForEditing(BookObj);
-                    If Res = MrCancel Then
-                        Exit;
-                End
+                    AcEditRecExecute(Sender)
                 Else
                     Application.MessageBox('Редактирование невозможно! В списке книг нет записей.', 'Предупреждение', MB_ICONWARNING);
             End;
@@ -381,9 +326,6 @@ Begin
 End;
 
 Procedure TfrmMain.MiWriterClick(Sender: TObject);
-Var
-    Res: Integer;
-    WriterObj: TObject;
 Begin
     LibraryEng.Category := Writer;
     Case BtTag Of
@@ -392,21 +334,14 @@ Begin
                 LvList.SetFocus;
                 LibraryEngine.State := Adding;
                 UpdateState;
-                Res := FrmEditor.ShowForNewRec();
-                If Res = MrCancel Then
-                    Exit;
+                AcAddRecExecute(Sender);
             End;
         2: // EditRed
             Begin
                 LibraryEngine.State := Editing;
                 UpdateState;
                 If LibraryEng.Writers <> Nil Then
-                Begin
-                    WriterObj := LibraryEng.Writers[LvList.Selected.Index];
-                    Res := FrmEditor.ShowForEditing(WriterObj);
-                    If Res = MrCancel Then
-                        Exit;
-                End
+                    AcEditRecExecute(Sender)
                 Else
                     Application.MessageBox('Редактирование невозможно! В списке писателей нет записей.', 'Предупреждение', MB_ICONWARNING);
             End;
@@ -417,8 +352,6 @@ Begin
             End;
     End;
 End;
-
-{ компоненты }
 
 Procedure TfrmMain.SdbtExitClick(Sender: TObject);
 Begin
@@ -436,6 +369,155 @@ Begin
             LibraryEng.Category := Author;
     End;
     UpdateList;
+End;
+
+{
+  ======== Actionlist ==========
+}
+
+Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
+Begin
+    AcEditRec.Enabled := LvList.ItemIndex > 0;
+    AcDeleteRec.Enabled := LvList.ItemIndex > 0;
+    AcSearch.Enabled := LvList.ItemIndex > 0;
+End;
+
+{ actionlist - record }
+
+Procedure TfrmMain.AcAddRecExecute(Sender: TObject);
+Var
+    Res: Integer;
+Begin
+    LvList.SetFocus;
+    Res := FrmEditor.ShowForNewRec();
+    If Res = MrCancel Then
+        Exit;
+End;
+
+Procedure TfrmMain.AcEditRecExecute(Sender: TObject);
+Var
+    Res: Integer;
+Begin
+    LvList.SetFocus;
+    // TaskList_GetItem(lvTasks.ItemIndex, Task);
+    Res := FrmEditor.ShowForEditing();
+    If Res = mrCancel Then
+        Exit;
+    // TaskList_SetItem(LvTasks.ItemIndex, Task);
+End;
+
+{ actionlist - form }
+
+Procedure TfrmMain.AcHelpContentsExecute(Sender: TObject);
+Const
+    FIRST_MESSAGE = '                                       Добро пожаловать в YourLibrary!' + #13#10 + #13#10;
+    SECOND_MESSAGE = 'Данная программа позволяет хранить записи с информацией о писателях и книгах, а также об авторстве.' + #13#10;
+    THIRD_MESSAGE =
+        'Для комфотного использования на левой панели представлены горячие кнопки, позволяющие взаимодействовать с приложением наиболее быстро.';
+    FOURTH_MESSAGE = 'Подробная информация по использованию приложения представлена в Руководстве пользователя.' + #13#10;
+    FIFTH_MESSAGE = #13#10 + '                                            Счастливого пользования!';
+Begin
+    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE + FIFTH_MESSAGE, 'Справка');
+End;
+
+Procedure TfrmMain.AcOpenFromFileExecute(Sender: TObject);
+Begin
+    {
+      //нужен двойной трай
+
+      AssignFile(InputFile, Path);
+
+      If (IsCorrect) Then
+      Begin
+      Try
+      Reset(InputFile);
+
+      frmMain.strgrFiles.RowCount := 1;
+      DocumentList := Nil;
+
+      While Not (EOF(InputFile)) Do
+      Begin
+      Read(InputFile, InputDocument);
+      SetLength(DocumentList, Length(DocumentList) + 1);
+      DocumentList[Length(DocumentList) - 1] := InputDocument;
+      frmMain.strgrFiles.RowCount := frmMain.strgrFiles.RowCount + 1;
+      End;
+      Except
+      Application.MessageBox('Ошибка при чтении файла!', 'Ошибка', MB_ICONERROR);
+      IsCorrect := False;
+      End;
+      Close(InputFile);
+      End;
+    }
+End;
+
+{ actionlist - options }
+
+Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
+Const
+    FIRST_MESSAGE = 'Ф.И.О.: Карась А.С.' + #13#10;
+    SECOND_MESSAGE = 'Группа: 251004' + #13#10;
+    THIRD_MESSAGE = 'Контакты: предварительная запись вживую по адресу' + #13#10;
+    FOURTH_MESSAGE = 'г.Гродно, ул.Мостовая, д.31';
+Begin
+    Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE, 'О разработчике');
+End;
+
+Procedure TfrmMain.AcOptionChoiceExecute(Sender: TObject);
+Var
+    Pt: TPoint;
+Begin
+    Pt.X := 1;
+    With Sender As TSpeedButton Do
+    Begin
+        BtTag := (Sender As TSpeedButton).Tag;
+        Pt := Point(Left + Width, Top);
+        Pt := Parent.ClientToScreen(Pt);
+    End;
+    PpabChoice.Popup(Pt.X, Pt.Y);
+End;
+
+Procedure TfrmMain.AcSaveToFileExecute(Sender: TObject);
+Begin
+    {
+      Const
+      Ext = '.refdoc';
+      Var
+      OutputFile: File of TDocument;
+      I: Integer;
+      NewFileName, OldFileName, OldExt: String;
+      Begin
+      If strgrFiles.RowCount > 1 Then
+      If (svdSaveToFileDialog.Execute And FileExists(svdSaveToFileDialog.FileName)) Then
+      Begin
+      AssignFile(OutputFile, svdSaveToFileDialog.FileName);
+
+      OldFileName := svdSaveToFileDialog.FileName;
+      OldExt := Copy(OldFileName, Pos('.', OldFileName), Length(OldFileName));
+      Delete(OldFileName, Pos(OldExt, OldFileName), Length(OldFileName) - Pos(OldExt, OldFileName) + 1); // убрали старое расширение
+      NewFileName := OldFileName + Ext; // добавили новое
+      RenameFile(svdSaveToFileDialog.FileName, NewFileName);
+
+      Try
+      try
+      Reset(OutputFile);
+
+      For I := 0 To High(DocumentList) Do
+      Write(OutputFile, DocumentList[I]);
+      finally
+      CloseFile(OutputFile);
+      end;
+      Except
+      Application.MessageBox('Отказано в доступе! Измените параметры файла или выберете другой файл! ', 'Ошибка!', MB_ICONERROR);
+      End;
+
+      Application.MessageBox('Данные успешно записаны в файл!', 'Сохранение', MB_ICONINFORMATION);
+      End
+      else
+      Application.MessageBox('Введено некорректное имя файла или закрыто окно сохранения!', 'Ошибка!', MB_ICONERROR)
+      Else
+      Application.MessageBox('Нельзя сохранить пустую таблицу! ', 'Ошибка!', MB_ICONERROR);
+    }
 End;
 
 End.

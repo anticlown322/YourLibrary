@@ -7,10 +7,9 @@ Uses
 
 Type
 
-    { классы и списки }
+    { классы }
 
     // Писатель
-
     TWriter = Class(TObject)
     Private
         WriterCode: Integer;
@@ -28,12 +27,14 @@ Type
     Private
         BookCode: Integer;
         BookLanguage: String;
+        BookName: String;
         BookPublicationYear: Integer;
     Public
         Property Code: Integer Read BookCode Write BookCode;
         Property Language: String Read BookLanguage Write BookLanguage;
+        Property Name: String Read BookName Write BookName;
         Property PublicationYear: Integer Read BookPublicationYear Write BookPublicationYear;
-        Constructor Create(Const BookCode: Integer; Const BookLanguage: String; Const BookPublicationYear: Integer);
+        Constructor Create(Const BookCode: Integer; Const BookLanguage: String; Const BookName: String; Const BookPublicationYear: Integer);
     End;
 
     // Автор
@@ -79,10 +80,11 @@ Begin
     Self.WriterNationality := WriterNationality;
 End;
 
-Constructor TBook.Create(Const BookCode: Integer; Const BookLanguage: String; Const BookPublicationYear: Integer);
+Constructor TBook.Create(Const BookCode: Integer; Const BookLanguage: String; Const BookName: String; Const BookPublicationYear: Integer);
 Begin
     Self.BookCode := BookCode;
     Self.BookLanguage := BookLanguage;
+    Self.BookName := BookName;
     Self.BookPublicationYear := BookPublicationYear;
 End;
 

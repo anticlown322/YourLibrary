@@ -20,7 +20,7 @@ Uses
 Type
     TfrmEditor = Class(TForm)
         PClient: TPanel;
-        BtContinue: TButton;
+        BtOk: TButton;
         PButtons: TPanel;
         BtCancel: TButton;
         LbTitle: TLabel;
@@ -32,7 +32,7 @@ Type
         Procedure FormShow(Sender: TObject);
     Public
         Function ShowForNewRec(): TModalResult;
-        Function ShowForEditing(Var Obj: TObject): TModalResult;
+        Function ShowForEditing(): TModalResult;
     End;
 
 Var
@@ -41,12 +41,11 @@ Var
 Implementation
 
 {$R *.dfm}
-
 { фнукции и процедуры }
 
 Function TfrmEditor.ShowForNewRec(): TModalResult;
 Begin
-    BtContinue.Caption := 'Создать';
+    BtOk.Caption := 'Создать';
     LbTitle.Left := 60;
     LbTitle.Caption := 'Новая запись';
     Case FrmMain.LibraryEng.Category Of
@@ -89,19 +88,27 @@ Begin
     End;
 
     Result := ShowModal;
-    {
-      If Result = MrOk Then
-      Begin
-      Task.Name := EditTitle.Text;
-      Task.Worker := EditWorker.Text;
-      Task.Priority := TPriority(CbPriority.ItemIndex);
-      End;
-    }
+    If Result = MrOk Then
+    Begin
+        Case FrmMain.LibraryEng.Category Of
+            Writer:
+                Begin
+                    ShowMessage('hui');
+                End;
+            Book:
+                Begin
+
+                End;
+            Author:
+                Begin
+                End;
+        End;
+    End;
 End;
 
-Function TfrmEditor.ShowForEditing(Var Obj: TObject): TModalResult;
+Function TfrmEditor.ShowForEditing(): TModalResult;
 Begin
-    BtContinue.Caption := 'Изменить';
+    BtOk.Caption := 'Изменить';
     LbTitle.Left := FrmEditor.Width Div 3;
     LbTitle.Caption := 'Редактирование записи';
     Case FrmMain.LibraryEng.Category Of
@@ -142,20 +149,24 @@ Begin
                 LbeField4.Visible := False;
             End;
     End;
-    Result := ShowModal;
-    {
-      EditTitle.Text := Task.Name;
-      EditWorker.Text := Task.Worker;
-      CbPriority.ItemIndex := Integer(Task.Priority);
 
-      Result := ShowModal;
-      If Result = MrOk Then
-      Begin
-      Task.Name := EditTitle.Text;
-      Task.Worker := EditWorker.Text;
-      Task.Priority := TPriority(CbPriority.ItemIndex);
-      End;
-    }
+    Result := ShowModal;
+    If Result = MrOk Then
+    Begin
+        Case FrmMain.LibraryEng.Category Of
+            Writer:
+                Begin
+                    ShowMessage('hui');
+                End;
+            Book:
+                Begin
+
+                End;
+            Author:
+                Begin
+                End;
+        End;
+    End;
 End;
 
 { форма }
