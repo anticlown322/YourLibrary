@@ -126,6 +126,7 @@ Begin
         IDYES:
             Begin
                 CanClose := True;
+                //AcSaveToFileExecute;
             End;
         IDNO:
             CanClose := True;

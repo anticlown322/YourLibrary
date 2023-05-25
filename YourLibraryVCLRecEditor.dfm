@@ -159,7 +159,6 @@ object frmEditor: TfrmEditor
     Height = 256
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 236
     object lbTitle: TLabel
       Left = 240
       Top = 13
@@ -183,7 +182,10 @@ object frmEditor: TfrmEditor
       EditLabel.Height = 13
       EditLabel.Caption = 'lbeField1'
       LabelSpacing = 5
+      MaxLength = 6
+      NumbersOnly = True
       TabOrder = 0
+      OnChange = lbeField1Change
     end
     object lbeField2: TLabeledEdit
       Left = 20
@@ -196,7 +198,9 @@ object frmEditor: TfrmEditor
       EditLabel.Height = 13
       EditLabel.Caption = 'lbeFiled1'
       LabelSpacing = 5
+      MaxLength = 40
       TabOrder = 1
+      OnChange = lbeField2Change
     end
     object lbeField3: TLabeledEdit
       Left = 20
@@ -209,7 +213,9 @@ object frmEditor: TfrmEditor
       EditLabel.Height = 13
       EditLabel.Caption = 'lbeFiled1'
       LabelSpacing = 5
+      MaxLength = 20
       TabOrder = 2
+      OnChange = lbeField3Change
     end
     object lbeField4: TLabeledEdit
       Left = 20
@@ -222,7 +228,10 @@ object frmEditor: TfrmEditor
       EditLabel.Height = 13
       EditLabel.Caption = 'lbeFiled1'
       LabelSpacing = 5
+      MaxLength = 4
+      NumbersOnly = True
       TabOrder = 3
+      OnChange = lbeField4Change
     end
   end
   object pButtons: TPanel
@@ -238,6 +247,20 @@ object frmEditor: TfrmEditor
       Width = 3
       Height = 13
       Alignment = taCenter
+    end
+    object lbIncorrectInput: TLabel
+      Left = 50
+      Top = 11
+      Width = 194
+      Height = 18
+      Caption = #1055#1088#1086#1074#1077#1088#1100#1090#1077' '#1074#1074#1086#1076' '#1076#1072#1085#1085#1099#1093'!'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
     end
     object btOk: TButton
       Left = 20
@@ -256,6 +279,15 @@ object frmEditor: TfrmEditor
       Caption = #1054#1090#1084#1077#1085#1072
       ModalResult = 2
       TabOrder = 1
+    end
+  end
+  object aclEditorActions: TActionList
+    Left = 248
+    Top = 8
+    object InputCheck: TAction
+      Category = 'Components'
+      Caption = #1055#1088#1086#1074#1077#1088#1082#1072' '#1085#1072' '#1074#1074#1086#1076
+      OnExecute = InputCheckExecute
     end
   end
 end

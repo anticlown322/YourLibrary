@@ -15,7 +15,9 @@ Uses
     Vcl.ExtCtrls,
     YourLibraryEngine,
     YourLibraryVCLMain,
-    Vcl.StdCtrls;
+    Vcl.StdCtrls,
+    System.Actions,
+    Vcl.ActnList;
 
 Type
     TfrmEditor = Class(TForm)
@@ -29,7 +31,15 @@ Type
         LbeField3: TLabeledEdit;
         LbFinalChoiceRequirement: TLabel;
         LbeField4: TLabeledEdit;
+        AclEditorActions: TActionList;
+        InputCheck: TAction;
+        LbIncorrectInput: TLabel;
         Procedure FormShow(Sender: TObject);
+        Procedure InputCheckExecute(Sender: TObject);
+        Procedure LbeField1Change(Sender: TObject);
+        Procedure LbeField2Change(Sender: TObject);
+        Procedure LbeField3Change(Sender: TObject);
+        Procedure LbeField4Change(Sender: TObject);
     Public
         Function ShowForNewRec(Var Obj: TObject): TModalResult;
         Function ShowForEditing(Const Index: Integer): TModalResult;
@@ -53,6 +63,8 @@ Begin
     BtOk.Caption := 'Создать';
     LbTitle.Left := 60;
     LbTitle.Caption := 'Новая запись';
+    LbeField2.NumbersOnly := False;
+    LbeField2.MaxLength := 40;
     Case FrmMain.LibraryEng.Category Of
         Writer:
             Begin
@@ -87,6 +99,8 @@ Begin
                 LbeField1.TextHint := 'Введите код писателя...';
                 LbeField2.EditLabel.Caption := 'Код книги: ';
                 LbeField2.TextHint := 'Введите код книги...';
+                LbeField2.NumbersOnly := True;
+                LbeField2.MaxLength := 6;
                 LbeField3.Visible := False;
                 LbeField4.Visible := False;
             End;
@@ -197,6 +211,79 @@ End;
 Procedure TfrmEditor.FormShow(Sender: TObject);
 Begin
     LbeField1.SetFocus;
+End;
+
+Procedure TfrmEditor.LbeField1Change(Sender: TObject);
+Begin
+    InputCheckExecute(Sender);
+End;
+
+Procedure TfrmEditor.LbeField2Change(Sender: TObject);
+Begin
+    InputCheckExecute(Sender);
+End;
+
+Procedure TfrmEditor.LbeField3Change(Sender: TObject);
+Begin
+    InputCheckExecute(Sender);
+End;
+
+Procedure TfrmEditor.LbeField4Change(Sender: TObject);
+Begin
+    InputCheckExecute(Sender);
+End;
+
+{ actionlist }
+
+Procedure TfrmEditor.InputCheckExecute(Sender: TObject);
+Const
+    INCORRECT_INPUT = ['0' .. '9', '!' .. ',', '.', '/', ':' .. '@', '[' .. '`', '{' .. '~'];
+Var
+    IsCorrect: Boolean;
+    CurrYear: Word;
+    I: Integer;
+Begin
+    IsCorrect := True;
+    CurrYear := CurrentYear;
+    Case FrmMain.LibraryEng.Category Of
+        Writer:
+            Begin
+                For I := 1 To Length(LbeField2.Text) Do
+                    If (LbeField2.Text[I] In INCORRECT_INPUT) Then
+                        IsCorrect := False;
+                For I := 1 To Length(LbeField3.Text) Do
+                    If (LbeField3.Text[I] In INCORRECT_INPUT) Then
+                        IsCorrect := False;
+            End;
+        Book:
+            Begin
+                For I := 1 To Length(LbeField2.Text) Do
+                    If (LbeField2.Text[I] In INCORRECT_INPUT) Then
+                        IsCorrect := False;
+                For I := 1 To Length(LbeField3.Text) Do
+                    If (LbeField3.Text[I] In INCORRECT_INPUT) Then
+                        IsCorrect := False;
+                If (Length(LbeField4.Text) > 0) And ((StrToInt(LbeField4.Text) > CurrYear)) Then
+                    IsCorrect := False;
+            End;
+        Author:
+            Begin
+                If (Length(LbeField1.Text) > 0) And ((StrToInt(LbeField1.Text) > CurrYear)) Or (Length(LbeField2.Text) > 0) And
+                    ((StrToInt(LbeField2.Text) > CurrYear)) Then
+                    IsCorrect := False;
+            End;
+    End;
+
+    If IsCorrect Then
+    Begin
+        LbIncorrectInput.Visible := False;
+        BtOk.Enabled := True;
+    End
+    Else
+    Begin
+        LbIncorrectInput.Visible := True;
+        BtOk.Enabled := False;
+    End;
 End;
 
 End.

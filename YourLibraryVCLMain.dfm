@@ -205,7 +205,6 @@ object frmMain: TfrmMain
       ShowHint = True
       OnClick = acOptionChoiceExecute
       ExplicitLeft = 0
-      ExplicitWidth = 48
     end
   end
   object pClient: TPanel
