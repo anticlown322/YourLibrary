@@ -3,9 +3,9 @@ object frmSearch: TfrmSearch
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
-  Caption = #1055#1086#1080#1089#1082
-  ClientHeight = 482
-  ClientWidth = 635
+  Caption = #1055#1086#1080#1089#1082' '#1082#1085#1080#1075#1080
+  ClientHeight = 485
+  ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -148,19 +148,173 @@ object frmSearch: TfrmSearch
     03FFC00003FFC00003FFC00003FFC00003FFC00003FFC00003FFC00003FFC000
     03FFE00007FFF0000FFFF8001FFFFC003FFFFE007FFFFFFFFFFFFFFFFFFF}
   OldCreateOrder = False
+  Position = poScreenCenter
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Panel1: TPanel
+  object pClient: TPanel
     Left = 0
     Top = 0
-    Width = 635
-    Height = 482
+    Width = 633
+    Height = 485
     Align = alClient
-    Caption = 'Panel1'
     TabOrder = 0
-    ExplicitLeft = 72
-    ExplicitTop = 96
-    ExplicitWidth = 185
-    ExplicitHeight = 41
+    ExplicitTop = 8
+    ExplicitHeight = 450
+    object pTop: TPanel
+      Left = 1
+      Top = 1
+      Width = 631
+      Height = 104
+      Align = alTop
+      Padding.Left = 3
+      Padding.Top = 3
+      Padding.Right = 3
+      Padding.Bottom = 3
+      TabOrder = 0
+      object sdbtBack: TSpeedButton
+        AlignWithMargins = True
+        Left = 9
+        Top = 9
+        Width = 145
+        Height = 48
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
+        Align = alLeft
+        Constraints.MaxHeight = 48
+        Caption = #1042#1077#1088#1085#1091#1090#1100#1089#1103
+        ImageIndex = 2
+        ImageName = 'fast-back'
+        Images = vilImages_36
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = sdbtBackClick
+        ExplicitHeight = 32
+      end
+      object sdbtSearchRecs: TSpeedButton
+        AlignWithMargins = True
+        Left = 164
+        Top = 9
+        Width = 165
+        Height = 48
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
+        Align = alLeft
+        Constraints.MaxHeight = 48
+        Caption = #1048#1089#1082#1072#1090#1100' '#1082#1085#1080#1075#1091
+        ImageIndex = 0
+        ImageName = 'review'
+        Images = vilImages_36
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = sdbtSearchRecsClick
+      end
+      object cmbeCategories: TComboBoxEx
+        AlignWithMargins = True
+        Left = 339
+        Top = 19
+        Width = 145
+        Height = 25
+        Margins.Left = 5
+        Margins.Top = 15
+        Margins.Right = 5
+        Margins.Bottom = 5
+        Align = alLeft
+        ItemsEx = <
+          item
+            Caption = #1055#1086' '#1082#1083#1102#1095#1077#1074#1086#1084#1091' '#1089#1083#1086#1074#1091
+          end
+          item
+            Caption = #1055#1086' '#1060'.'#1048'.'#1054'. '#1087#1080#1089#1072#1090#1077#1083#1103
+          end>
+        Style = csExDropDownList
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        OnChange = cmbeCategoriesChange
+        ExplicitLeft = 351
+      end
+      object lbeFilterWord: TLabeledEdit
+        Left = 339
+        Top = 71
+        Width = 281
+        Height = 21
+        EditLabel.Width = 5
+        EditLabel.Height = 19
+        EditLabel.Font.Charset = DEFAULT_CHARSET
+        EditLabel.Font.Color = clWindowText
+        EditLabel.Font.Height = -16
+        EditLabel.Font.Name = 'Tahoma'
+        EditLabel.Font.Style = [fsBold]
+        EditLabel.ParentFont = False
+        TabOrder = 1
+        Visible = False
+      end
+    end
+    object lvList: TListView
+      Left = 1
+      Top = 105
+      Width = 631
+      Height = 379
+      Align = alClient
+      Columns = <>
+      FlatScrollBars = True
+      HotTrack = True
+      MultiSelect = True
+      ReadOnly = True
+      RowSelect = True
+      ShowWorkAreas = True
+      SortType = stText
+      TabOrder = 1
+      ViewStyle = vsReport
+      ExplicitLeft = 2
+      ExplicitTop = 111
+      ExplicitHeight = 404
+    end
+  end
+  object vilImages_36: TVirtualImageList
+    DisabledGrayscale = False
+    DisabledSuffix = '_Disabled'
+    Images = <
+      item
+        CollectionIndex = 4
+        CollectionName = 'HotButtons\review'
+        Disabled = False
+        Name = 'review'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = 'undo'
+        Disabled = False
+        Name = 'undo'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = 'fast-back'
+        Disabled = False
+        Name = 'fast-back'
+      end>
+    ImageCollection = dtmdImages.imcForButtons
+    Width = 36
+    Height = 36
+    Left = 584
+    Top = 16
   end
 end

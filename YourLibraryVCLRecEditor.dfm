@@ -233,6 +233,18 @@ object frmEditor: TfrmEditor
       TabOrder = 3
       OnChange = lbeField4Change
     end
+    object bbtHelp: TBitBtn
+      Left = 208
+      Top = 215
+      Width = 78
+      Height = 35
+      Cursor = crHelp
+      Caption = #1057#1087#1088#1072#1074#1082#1072
+      Kind = bkHelp
+      NumGlyphs = 2
+      TabOrder = 4
+      OnClick = acHelpContentsExecute
+    end
   end
   object pButtons: TPanel
     Left = 0
@@ -288,6 +300,10 @@ object frmEditor: TfrmEditor
       Category = 'Components'
       Caption = #1055#1088#1086#1074#1077#1088#1082#1072' '#1085#1072' '#1074#1074#1086#1076
       OnExecute = InputCheckExecute
+    end
+    object acHelpContents: TAction
+      Category = 'Components'
+      OnExecute = acHelpContentsExecute
     end
   end
 end

@@ -97,7 +97,6 @@ object frmMain: TfrmMain
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
-      Action = acSearch
       Align = alTop
       ImageIndex = 4
       ImageName = 'HotButtons\review'
@@ -105,9 +104,8 @@ object frmMain: TfrmMain
       Flat = True
       ParentShowHint = False
       ShowHint = True
+      OnClick = acSearchExecute
       ExplicitLeft = 0
-      ExplicitTop = 220
-      ExplicitWidth = 48
     end
     object sdbtSaveToFile: TSpeedButton
       AlignWithMargins = True
@@ -232,6 +230,8 @@ object frmMain: TfrmMain
       TabOrder = 0
       ViewStyle = vsReport
       OnClick = lvListClick
+      ExplicitLeft = 2
+      ExplicitTop = 58
     end
     object pTop: TPanel
       Left = 1
@@ -245,6 +245,7 @@ object frmMain: TfrmMain
       Padding.Right = 3
       Padding.Bottom = 3
       TabOrder = 1
+      ExplicitLeft = 2
       object lbFilter: TLabel
         Left = 21
         Top = 12
@@ -347,6 +348,7 @@ object frmMain: TfrmMain
     end
     object acSearch: TAction
       Category = 'Options'
+      OnExecute = acSearchExecute
     end
     object acOptionChoice: TAction
       Category = 'Options'
@@ -429,7 +431,10 @@ object frmMain: TfrmMain
     Top = 8
   end
   object opdOpenFromFileDialog: TOpenDialog
-    Filter = 'Text Files|*.txt'
+    Filter = 
+      'Text Files|*.txt|Writesr Document|*.writdoc| Books Document|*.bo' +
+      'okdoc|Authors Document|*.authdoc|YourLibrary Documents|*.writdoc' +
+      '; *.bookdoc; *.authdoc'
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Left = 302
     Top = 8
@@ -481,7 +486,7 @@ object frmMain: TfrmMain
   object ppabChoice: TPopupActionBar
     Images = vilIcons_16
     Left = 245
-    Top = 3
+    Top = 11
     StyleName = 'XP Style'
     object miWriter: TMenuItem
       Break = mbBreak

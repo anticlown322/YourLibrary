@@ -35,7 +35,7 @@ Type
         Property Language: String Read BookLanguage Write BookLanguage;
         Property Name: String Read BookName Write BookName;
         Property PublicationYear: Integer Read BookPublicationYear Write BookPublicationYear;
-        Constructor Create(Const BookCode: Integer; Const BookLanguage: String; Const BookName: String; Const BookPublicationYear: Integer);
+        Constructor Create(Const BookCode: Integer; Const BookName: String; Const BookLanguage: String; Const BookPublicationYear: Integer);
     End;
 
     // Автор
@@ -46,7 +46,7 @@ Type
     Public
         Property BookCode: Integer Read AuthorBookCode Write AuthorBookCode;
         Property WriterCode: Integer Read AuthorWriterCode Write AuthorWriterCode;
-        Constructor Create(Const AuthorBookCode: Integer; Const AuthorWriterCode: Integer);
+        Constructor Create(Const AuthorWriterCode: Integer; Const AuthorBookCode: Integer);
     End;
 
     { основной класс }
@@ -91,18 +91,18 @@ Begin
     Self.WriterNationality := WriterNationality;
 End;
 
-Constructor TBook.Create(Const BookCode: Integer; Const BookLanguage: String; Const BookName: String; Const BookPublicationYear: Integer);
+Constructor TBook.Create(Const BookCode: Integer; Const BookName: String; Const BookLanguage: String; Const BookPublicationYear: Integer);
 Begin
     Self.BookCode := BookCode;
-    Self.BookLanguage := BookLanguage;
     Self.BookName := BookName;
+    Self.BookLanguage := BookLanguage;
     Self.BookPublicationYear := BookPublicationYear;
 End;
 
-Constructor TAuthor.Create(Const AuthorBookCode: Integer; Const AuthorWriterCode: Integer);
+Constructor TAuthor.Create(Const AuthorWriterCode: Integer; Const AuthorBookCode: Integer);
 Begin
-    Self.AuthorBookCode := AuthorBookCode;
     Self.AuthorWriterCode := AuthorWriterCode;
+    Self.AuthorBookCode := AuthorBookCode;
 End;
 
 { TLibraryEngine }
