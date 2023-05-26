@@ -48,8 +48,6 @@ object frmMain: TfrmMain
       ParentShowHint = False
       ShowHint = True
       ExplicitLeft = 0
-      ExplicitTop = 58
-      ExplicitWidth = 48
     end
     object sdbtHelp: TSpeedButton
       AlignWithMargins = True
@@ -115,7 +113,6 @@ object frmMain: TfrmMain
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
-      Action = acSaveToFile
       Align = alTop
       ImageIndex = 6
       ImageName = 'HotButtons\filesaveas'
@@ -123,9 +120,8 @@ object frmMain: TfrmMain
       Flat = True
       ParentShowHint = False
       ShowHint = True
+      OnClick = acSaveToFileExecute
       ExplicitLeft = 0
-      ExplicitTop = 112
-      ExplicitWidth = 48
     end
     object sdbtDeleteRecord: TSpeedButton
       Tag = 3
@@ -230,8 +226,6 @@ object frmMain: TfrmMain
       TabOrder = 0
       ViewStyle = vsReport
       OnClick = lvListClick
-      ExplicitLeft = 2
-      ExplicitTop = 58
     end
     object pTop: TPanel
       Left = 1
@@ -245,7 +239,6 @@ object frmMain: TfrmMain
       Padding.Right = 3
       Padding.Bottom = 3
       TabOrder = 1
-      ExplicitLeft = 2
       object lbFilter: TLabel
         Left = 21
         Top = 12

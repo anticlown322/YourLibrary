@@ -91,6 +91,7 @@ Type
         LibraryEngine: TLibraryEngine;
         Procedure UpdateList;
         Procedure UpdateState;
+        Procedure SaveFiles();
     Public
         Property BtTag: Integer Read ButtonTag Write ButtonTag;
         Property LibraryEng: TLibraryEngine Read LibraryEngine Write LibraryEngine;
@@ -128,7 +129,7 @@ Begin
         IDYES:
             Begin
                 CanClose := True;
-                // AcSaveToFileExecute;
+                AcSaveToFileExecute(Sender);
             End;
         IDNO:
             CanClose := True;
@@ -274,6 +275,22 @@ Begin
     End;
 End;
 
+Procedure TfrmMain.SaveFiles();
+Var
+    IsCorrect: Boolean;
+Begin
+    IsCorrect := True;
+
+    LibraryEng.SaveToFile(LibraryEng.Writers, 'writers', '.writerdoc', IsCorrect);
+    LibraryEng.SaveToFile(LibraryEng.Books, 'books', '.bookdoc', IsCorrect);
+    LibraryEng.SaveToFile(LibraryEng.Authors, 'authors', '.authordoc', IsCorrect);
+
+    If IsCorrect Then
+        Application.MessageBox('Данные успешно записаны в файлы!', 'Сохранение', MB_ICONINFORMATION)
+    Else
+        Application.MessageBox('При записи в файлы произошла ошибка!', 'Ошибка', MB_ICONERROR);
+End;
+
 Procedure TfrmMain.FormDestroy(Sender: TObject);
 Begin
     LibraryEngine.Writers.Free;
@@ -410,9 +427,10 @@ End;
 
 Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
 Begin
-    AcEditRec.Enabled := LvList.ItemIndex > 0;
-    AcDeleteRec.Enabled := LvList.ItemIndex > 0;
-    AcSearch.Enabled := LvList.ItemIndex > 0;
+    {
+      AcEditRec.Enabled := LvList.ItemIndex > 0;
+      AcDeleteRec.Enabled := LvList.ItemIndex > 0;
+    }
 End;
 
 { actionlist - record }
@@ -459,56 +477,6 @@ Begin
     Application.MessageBox(FIRST_MESSAGE + SECOND_MESSAGE + THIRD_MESSAGE + FOURTH_MESSAGE + FIFTH_MESSAGE, 'Справка');
 End;
 
-Procedure TfrmMain.AcOpenFromFileExecute(Sender: TObject);
-Begin
-    AssignFile(InputFile, Path);
-
-    If (IsCorrect) Then
-    Begin
-        Try
-            Reset(InputFile);
-
-            FrmMain.StrgrFiles.RowCount := 1;
-            DocumentList := Nil;
-
-            While Not(EOF(InputFile)) Do
-            Begin
-                Read(InputFile, InputDocument);
-                SetLength(DocumentList, Length(DocumentList) + 1);
-                DocumentList[Length(DocumentList) - 1] := InputDocument;
-                FrmMain.StrgrFiles.RowCount := FrmMain.StrgrFiles.RowCount + 1;
-            End;
-        Except
-            Application.MessageBox('Ошибка при чтении файла!', 'Ошибка', MB_ICONERROR);
-            IsCorrect := False;
-        End;
-        Close(InputFile);
-    End;
-
-    If OpdOpenFromFileDialog.Execute() Then
-        If IsFileOfArrCorrect(OpdOpenFromFileDialog.FileName) Then
-        Begin
-            GetSizeFromFile(OpdOpenFromFileDialog.FileName, SizeFromFile, IsCorrect);
-            Size := Round(SizeFromFile);
-
-            SetLength(Sequence, Size);
-            SetLength(SequenceFromFile, Size);
-            SequenceFromFile := GetSequenceFromFile(OpdOpenFromFileDialog.FileName, Size, Sequence, IsCorrect);
-
-            If (IsCorrect) Then
-            Begin
-                LbeSize.Text := SizeFromFile.ToString;
-                BtConfirmSizeClick(Sender);
-            End;
-            For I := 1 To Size Do
-            Begin
-                StrgrSequence.Cells[I, 1] := IntToStr(SequenceFromFile[I - 1]);
-            End;
-        End
-        Else
-            Application.MessageBox('Данные в файле некорректны, попробуйте ещё раз.', 'Ошибка!', MB_ICONERROR);
-End;
-
 { actionlist - options }
 
 Procedure TfrmMain.AcDevInfoExecute(Sender: TObject);
@@ -535,75 +503,69 @@ Begin
     PpabChoice.Popup(Pt.X, Pt.Y);
 End;
 
-Procedure TfrmMain.AcSaveToFileExecute(Sender: TObject);
-Const
-    Ext = '.libdoc';
-
+Procedure TfrmMain.AcOpenFromFileExecute(Sender: TObject);
 Var
-    OutputFile: File Of TDocument;
-    I: Integer;
-    NewFileName, OldFileName, OldExt: String;
+    InputFile: File Of TObject;
+    InputRec: TObject;
+    IsCorrect: Boolean;
 Begin
-
+    IsCorrect := True;
+    If OpdOpenFromFileDialog.Execute() Then
     Begin
-        If StrgrFiles.RowCount > 1 Then
-            If (SvdSaveToFileDialog.Execute And FileExists(SvdSaveToFileDialog.FileName)) Then
-            Begin
-                AssignFile(OutputFile, SvdSaveToFileDialog.FileName);
+        AssignFile(InputFile, OpdOpenFromFileDialog.FileName);
 
-                OldFileName := SvdSaveToFileDialog.FileName;
-                OldExt := Copy(OldFileName, Pos('.', OldFileName), Length(OldFileName));
-                Delete(OldFileName, Pos(OldExt, OldFileName), Length(OldFileName) - Pos(OldExt, OldFileName) + 1); // убрали старое расширение
-                NewFileName := OldFileName + Ext; // добавили новое
-                RenameFile(SvdSaveToFileDialog.FileName, NewFileName);
+        If (IsCorrect) Then
+        Begin
+            {
+              Try
+              Try
+              Reset(InputFile);
 
-                Try
-                    Try
-                        Reset(OutputFile);
-
-                        For I := 0 To High(DocumentList) Do
-                            Write(OutputFile, DocumentList[I]);
-                    Finally
-                        CloseFile(OutputFile);
-                    End;
-                Except
-                    Application.MessageBox('Отказано в доступе! Измените параметры файла или выберете другой файл! ', 'Ошибка!', MB_ICONERROR);
-                End;
-
-                Application.MessageBox('Данные успешно записаны в файл!', 'Сохранение', MB_ICONINFORMATION);
-            End
-            Else
-                Application.MessageBox('Введено некорректное имя файла или закрыто окно сохранения!', 'Ошибка!', MB_ICONERROR)
-        Else
-            Application.MessageBox('Нельзя сохранить пустую таблицу! ', 'Ошибка!', MB_ICONERROR);
-    End;
-
-    If SvdSaveToFileDialog.Execute() And FileExists(SvdSaveToFileDialog.FileName) Then
-    Begin
-        AssignFile(OutputFile, SvdSaveToFileDialog.FileName);
-
-        Try
-            Try
-                Rewrite(OutputFile);
-
-                Writeln(OutputFile, 'Входные данные: ');
-                Writeln(OutputFile, LbeSize.Text);
-                For I := 1 To StrgrSequence.ColCount - 1 Do
-                    Write(OutputFile, StrgrSequence.Cells[I, 1], ' -> ');
-
-                Write(OutputFile, ' Конец последовательности.' + #13#10 + 'Ответ: ' + #13#10);
-                Writeln(OutputFile, LbFinalResult.Caption);
-
-                Application.MessageBox('Данные успешно записаны в файл!', 'Сохранение', MB_ICONINFORMATION);
-            Finally
-                CloseFile(OutputFile);
-            End;
-        Except
-            Application.MessageBox('Отказано в доступе! Измените параметры файла! ', 'Ошибка!', MB_ICONERROR);
+              Case ExtractFileExt(OpdOpenFromFileDialog.FileName) Of
+              '.writdoc':
+              Begin
+              LibraryEng.Writers.Clear;
+              While Not(EOF(InputFile)) Do
+              Begin
+              Read(InputFile, InputRec);
+              LibraryEng.List_AddItem(InputRec, LibraryEng.Writers);
+              End;
+              End;
+              '.bookdoc':
+              Begin
+              LibraryEng.Books.Clear;
+              While Not(EOF(InputFile)) Do
+              Begin
+              Read(InputFile, InputRec);
+              LibraryEng.List_AddItem(InputRec, LibraryEng.Books);
+              End;
+              End;
+              '.authdoc':
+              Begin
+              LibraryEng.Authors.Clear;
+              While Not(EOF(InputFile)) Do
+              Begin
+              Read(InputFile, InputRec);
+              LibraryEng.List_AddItem(InputRec, LibraryEng.Authors);
+              End;
+              End;
+              End;
+              Finally
+              Close(InputFile);
+              End;
+              Except
+              Application.MessageBox('Ошибка при чтении файла!', 'Ошибка', MB_ICONERROR);
+              IsCorrect := False;
+              End;
+            }
         End;
+        UpdateList;
     End
-    Else
-        Application.MessageBox('Введено некорректное имя файла или закрыто окно сохранения!', 'Ошибка!', MB_ICONERROR);
+End;
+
+Procedure TfrmMain.AcSaveToFileExecute(Sender: TObject);
+Begin
+    SaveFiles();
 End;
 
 Procedure TfrmMain.AcSearchExecute(Sender: TObject);
