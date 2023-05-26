@@ -100,6 +100,7 @@ Type
         Procedure List_GetItem(Index: Integer; Var Obj: TObject; List: TObjectList<TObject>);
         Procedure List_SetItem(Index: Integer; Const Obj: TObject; List: TObjectList<TObject>);
         Procedure List_RemoveItem(Index: Integer; List: TObjectList<TObject>);
+        Procedure OpenFromFile(Const FileName: String; Var IsCorrect: Boolean);
         Procedure SaveToFile(Const List: TObjectList<TObject>; Const CategoryName: String; Const Ext: String; Var IsCorrect: Boolean);
     End;
 
@@ -210,6 +211,41 @@ End;
 Procedure TLibraryEngine.List_RemoveItem(Index: Integer; List: TObjectList<TObject>);
 Begin
     List.Delete(Index);
+End;
+
+Procedure TLibraryEngine.OpenFromFile(Const FileName: String; Var IsCorrect: Boolean);
+Var
+    Obj: TObject;
+    I, CategoryIndex: Integer;
+Begin
+    If ExtractFileExt(FileName) = '.writerdoc' Then
+        CategoryIndex := 0;
+    If ExtractFileExt(FileName) = '.bookdoc' Then
+        CategoryIndex := 1;
+    If ExtractFileExt(FileName) = '.authordoc' Then
+        CategoryIndex := 2;
+
+    Case CategoryIndex Of
+        0:
+            Try
+
+            Except
+                IsCorrect := False;
+            End;
+        1:
+            Try
+
+            Except
+                IsCorrect := False;
+            End;
+        2:
+            Try
+
+            Except
+                IsCorrect := False;
+            End;
+    End;
+
 End;
 
 Procedure TLibraryEngine.SaveToFile(Const List: TObjectList<TObject>; Const CategoryName: String; Const Ext: String; Var IsCorrect: Boolean);

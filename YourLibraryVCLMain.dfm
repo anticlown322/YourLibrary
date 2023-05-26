@@ -305,7 +305,6 @@ object frmMain: TfrmMain
   end
   object actlActions: TActionList
     Images = vilImages_48
-    OnUpdate = actlActionsUpdate
     Left = 272
     Top = 8
     object acHelpContents: TAction

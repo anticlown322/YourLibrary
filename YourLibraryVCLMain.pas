@@ -72,7 +72,6 @@ Type
         Procedure SdbtExitClick(Sender: TObject);
         Procedure AcDevInfoExecute(Sender: TObject);
         Procedure AcOptionChoiceExecute(Sender: TObject);
-        Procedure ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
         Procedure MiWriterClick(Sender: TObject);
         Procedure MiBookClick(Sender: TObject);
         Procedure MiAuthorClick(Sender: TObject);
@@ -91,7 +90,6 @@ Type
         LibraryEngine: TLibraryEngine;
         Procedure UpdateList;
         Procedure UpdateState;
-        Procedure SaveFiles();
     Public
         Property BtTag: Integer Read ButtonTag Write ButtonTag;
         Property LibraryEng: TLibraryEngine Read LibraryEngine Write LibraryEngine;
@@ -275,22 +273,6 @@ Begin
     End;
 End;
 
-Procedure TfrmMain.SaveFiles();
-Var
-    IsCorrect: Boolean;
-Begin
-    IsCorrect := True;
-
-    LibraryEng.SaveToFile(LibraryEng.Writers, 'writers', '.writerdoc', IsCorrect);
-    LibraryEng.SaveToFile(LibraryEng.Books, 'books', '.bookdoc', IsCorrect);
-    LibraryEng.SaveToFile(LibraryEng.Authors, 'authors', '.authordoc', IsCorrect);
-
-    If IsCorrect Then
-        Application.MessageBox('Данные успешно записаны в файлы!', 'Сохранение', MB_ICONINFORMATION)
-    Else
-        Application.MessageBox('При записи в файлы произошла ошибка!', 'Ошибка', MB_ICONERROR);
-End;
-
 Procedure TfrmMain.FormDestroy(Sender: TObject);
 Begin
     LibraryEngine.Writers.Free;
@@ -421,18 +403,6 @@ Begin
     Close;
 End;
 
-{
-  ======== Actionlist ==========
-}
-
-Procedure TfrmMain.ActlActionsUpdate(Action: TBasicAction; Var Handled: Boolean);
-Begin
-    {
-      AcEditRec.Enabled := LvList.ItemIndex > 0;
-      AcDeleteRec.Enabled := LvList.ItemIndex > 0;
-    }
-End;
-
 { actionlist - record }
 
 Procedure TfrmMain.AcAddRecExecute(Sender: TObject);
@@ -505,67 +475,95 @@ End;
 
 Procedure TfrmMain.AcOpenFromFileExecute(Sender: TObject);
 Var
-    InputFile: File Of TObject;
-    InputRec: TObject;
+    Obj: TObject;
+    I, CategoryIndex: Integer;
     IsCorrect: Boolean;
+    InputFileWriters: File Of TWriterRec;
+    InputFileBooks: File Of TBookRec;
+    InputFileAuthors: File Of TAuthorRec;
+    WriterRec: TWriterRec;
+    BookRec: TBookRec;
+    AuthorRec: TAuthorRec;
 Begin
     IsCorrect := True;
     If OpdOpenFromFileDialog.Execute() Then
     Begin
-        AssignFile(InputFile, OpdOpenFromFileDialog.FileName);
+        If ExtractFileExt(OpdOpenFromFileDialog.FileName) = '.writerdoc' Then
+            CategoryIndex := 0;
+        If ExtractFileExt(OpdOpenFromFileDialog.FileName) = '.bookdoc' Then
+            CategoryIndex := 1;
+        If ExtractFileExt(OpdOpenFromFileDialog.FileName) = '.authordoc' Then
+            CategoryIndex := 2;
 
-        If (IsCorrect) Then
-        Begin
-            {
-              Try
-              Try
-              Reset(InputFile);
-
-              Case ExtractFileExt(OpdOpenFromFileDialog.FileName) Of
-              '.writdoc':
-              Begin
-              LibraryEng.Writers.Clear;
-              While Not(EOF(InputFile)) Do
-              Begin
-              Read(InputFile, InputRec);
-              LibraryEng.List_AddItem(InputRec, LibraryEng.Writers);
-              End;
-              End;
-              '.bookdoc':
-              Begin
-              LibraryEng.Books.Clear;
-              While Not(EOF(InputFile)) Do
-              Begin
-              Read(InputFile, InputRec);
-              LibraryEng.List_AddItem(InputRec, LibraryEng.Books);
-              End;
-              End;
-              '.authdoc':
-              Begin
-              LibraryEng.Authors.Clear;
-              While Not(EOF(InputFile)) Do
-              Begin
-              Read(InputFile, InputRec);
-              LibraryEng.List_AddItem(InputRec, LibraryEng.Authors);
-              End;
-              End;
-              End;
-              Finally
-              Close(InputFile);
-              End;
-              Except
-              Application.MessageBox('Ошибка при чтении файла!', 'Ошибка', MB_ICONERROR);
-              IsCorrect := False;
-              End;
-            }
+        Case CategoryIndex Of
+            0:
+                Try
+                    Reset(InputFileWriters, OpdOpenFromFileDialog.FileName);
+                    Try
+                        While Not(EOF(InputFileWriters)) Do
+                        Begin
+                            Read(InputFileWriters, WriterRec);
+                            LibraryEng.Writers.Add(TWriter.Create(WriterRec.WriterCode, WriterRec.WriterName, WriterRec.WriterNationality));
+                        End;
+                    Finally
+                        Close(InputFileWriters);
+                    End;
+                Except
+                    IsCorrect := False;
+                End;
+            1:
+                Try
+                    Reset(InputFileBooks, OpdOpenFromFileDialog.FileName);
+                    Try
+                        While Not(EOF(InputFileBooks)) Do
+                        Begin
+                            Read(InputFileBooks, BookRec);
+                            LibraryEng.Books.Add(TBook.Create(BookRec.BookCode, BookRec.BookName, BookRec.BookLanguage, BookRec.BookPublicationYear));
+                        End;
+                    Finally
+                        Close(InputFileBooks);
+                    End;
+                Except
+                    IsCorrect := False;
+                End;
+            2:
+                Try
+                    Reset(InputFileAuthors, OpdOpenFromFileDialog.FileName);
+                    Try
+                        While Not(EOF(InputFileAuthors)) Do
+                        Begin
+                            Read(InputFileAuthors, WriterRec);
+                            LibraryEng.Authors.Add(TAuthor.Create(AuthorRec.AuthorWriterCode, AuthorRec.AuthorBookCode));
+                        End;
+                    Finally
+                        Close(InputFileAuthors);
+                    End;
+                Except
+                    IsCorrect := False;
+                End;
         End;
-        UpdateList;
+
+        If Not IsCorrect Then
+            Application.MessageBox('При открытии из файла произошла ошибка!', 'Ошибка', MB_ICONERROR)
+        Else
+            UpdateList;
     End
 End;
 
 Procedure TfrmMain.AcSaveToFileExecute(Sender: TObject);
+Var
+    IsCorrect: Boolean;
 Begin
-    SaveFiles();
+    IsCorrect := True;
+
+    LibraryEng.SaveToFile(LibraryEng.Writers, 'writers', '.writerdoc', IsCorrect);
+    LibraryEng.SaveToFile(LibraryEng.Books, 'books', '.bookdoc', IsCorrect);
+    LibraryEng.SaveToFile(LibraryEng.Authors, 'authors', '.authordoc', IsCorrect);
+
+    If IsCorrect Then
+        Application.MessageBox('Данные успешно записаны в файлы!', 'Сохранение', MB_ICONINFORMATION)
+    Else
+        Application.MessageBox('При записи в файлы произошла ошибка!', 'Ошибка', MB_ICONERROR);
 End;
 
 Procedure TfrmMain.AcSearchExecute(Sender: TObject);
